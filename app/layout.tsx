@@ -1,8 +1,9 @@
 import type { Metadata, Viewport } from 'next';
+import { Inter } from 'next/font/google';
 import { Providers } from '@/components/providers';
 import './globals.css';
 
-export const dynamic = 'force-dynamic';
+const inter = Inter({ subsets: ['latin'], weight: ['400', '500', '600', '700', '800'] });
 
 export const viewport: Viewport = {
   width: 'device-width',
@@ -46,7 +47,7 @@ export default function RootLayout({
         <meta name="mobile-web-app-capable" content="yes" />
         <link rel="apple-touch-icon" href="/icons/icon-192x192.png" />
       </head>
-      <body>
+      <body className={inter.className}>
         <Providers>{children}</Providers>
         <script
           dangerouslySetInnerHTML={{

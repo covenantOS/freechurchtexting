@@ -5,6 +5,7 @@ import { useSession, signOut } from 'next-auth/react';
 import { Settings, LogOut, ChevronDown, Menu, X, MessageSquareText } from 'lucide-react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
+import { useAdmin } from '@/lib/admin-context';
 
 interface HeaderProps {
   onMenuToggle?: () => void;
@@ -14,6 +15,19 @@ interface HeaderProps {
 export function Header({ onMenuToggle, isMenuOpen }: HeaderProps) {
   const { data: session } = useSession() || {};
   const [dropdownOpen, setDropdownOpen] = React.useState(false);
+  const { isImpersonating, impersonatedUser } = useAdmin();
+  const isSuperAdmin = (session?.user as any)?.isSuperAdmin;
+
+  // Determine display name: if super admin and impersonating, show impersonated church name
+  // If super admin and NOT impersonating, show "Super Admin"
+  // Otherwise show the session user's church name
+  const displayName = isSuperAdmin
+    ? (isImpersonating && impersonatedUser ? impersonatedUser.churchName : 'Super Admin')
+    : (session?.user?.churchName || 'Church');
+
+  const displayInitial = isSuperAdmin && !isImpersonating
+    ? 'A'
+    : (isImpersonating && impersonatedUser ? impersonatedUser.churchName?.[0]?.toUpperCase() : session?.user?.name?.[0]?.toUpperCase?.()) || 'U';
 
   return (
     <header className="fixed top-0 left-0 right-0 h-16 bg-white/95 backdrop-blur-sm border-b border-gray-100 z-40">
@@ -62,13 +76,13 @@ export function Header({ onMenuToggle, isMenuOpen }: HeaderProps) {
               onClick={() => setDropdownOpen(!dropdownOpen)}
               className="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-gray-50 transition-colors"
             >
-              <div className="h-8 w-8 rounded-full bg-brand-100 flex items-center justify-center">
-                <span className="text-sm font-medium text-brand-700">
-                  {session?.user?.name?.[0]?.toUpperCase?.() || 'U'}
+              <div className={`h-8 w-8 rounded-full flex items-center justify-center ${isSuperAdmin && !isImpersonating ? 'bg-red-100' : 'bg-brand-100'}`}>
+                <span className={`text-sm font-medium ${isSuperAdmin && !isImpersonating ? 'text-red-700' : 'text-brand-700'}`}>
+                  {displayInitial}
                 </span>
               </div>
               <div className="hidden sm:block text-left">
-                <p className="text-sm font-medium text-gray-900">{session?.user?.churchName || 'Church'}</p>
+                <p className="text-sm font-medium text-gray-900">{displayName}</p>
                 <p className="text-xs text-gray-500">{session?.user?.email}</p>
               </div>
               <ChevronDown className="h-4 w-4 text-gray-400" />

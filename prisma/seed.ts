@@ -1,5 +1,6 @@
 import { PrismaClient, OptInStatus, SubscriptionTier, TemplateCategory, MessageType, MessageStatus, SendingMode } from '@prisma/client';
 import bcrypt from 'bcryptjs';
+import { DEFAULT_TEMPLATES } from '../lib/default-templates';
 
 const prisma = new PrismaClient();
 
@@ -190,18 +191,12 @@ async function main() {
 
   console.log(`  Created ${graceContactIds.length} contacts`);
 
-  // --- 3 Templates ---
-  const graceTemplates = [
-    { name: 'Weekly Reminder', body: 'Hi {first_name}! Just a reminder that service is this Sunday at 10am. See you there!', category: 'event' as TemplateCategory },
-    { name: 'Event Announcement', body: 'Hey {first_name}, join us for {event_name} on {date}! Reply YES to RSVP.', category: 'event' as TemplateCategory },
-    { name: 'Prayer Request', body: 'Hi {first_name}, the prayer team is praying for you this week. Let us know how we can continue to support you.', category: 'prayer' as TemplateCategory },
-  ];
-
-  for (const t of graceTemplates) {
+  // --- 20 Default Templates ---
+  for (const t of DEFAULT_TEMPLATES) {
     await prisma.template.upsert({
       where: { churchId_name: { churchId: graceChurch.id, name: t.name } },
       update: {},
-      create: { churchId: graceChurch.id, ...t },
+      create: { churchId: graceChurch.id, name: t.name, body: t.body, category: t.category as TemplateCategory },
     });
   }
 
@@ -295,7 +290,7 @@ async function main() {
   }
 
   console.log('  Created 5 inbound messages');
-  console.log('  Created 3 templates, 2 auto-replies, 3 groups');
+  console.log('  Created 20 default templates, 2 auto-replies, 3 groups');
   console.log(`  Grace Community Church ID: ${graceChurch.id}\n`);
 
   // =========================================================================
@@ -386,6 +381,15 @@ async function main() {
 
   console.log(`  Created ${fbfContactIds.length} contacts`);
 
+  // --- 20 Default Templates ---
+  for (const t of DEFAULT_TEMPLATES) {
+    await prisma.template.upsert({
+      where: { churchId_name: { churchId: fbfChurch.id, name: t.name } },
+      update: {},
+      create: { churchId: fbfChurch.id, name: t.name, body: t.body, category: t.category as TemplateCategory },
+    });
+  }
+
   // --- 5 Sent messages ---
   const fbfMessageBodies = [
     { body: 'Good morning church family! Service this Sunday at 10:30am.', type: 'blast' as MessageType },
@@ -430,7 +434,7 @@ async function main() {
   }
 
   console.log('  Created 5 sent messages');
-  console.log('  Created 1 group');
+  console.log('  Created 20 default templates, 1 group');
   console.log(`  First Baptist Fellowship ID: ${fbfChurch.id}\n`);
 
   // =========================================================================

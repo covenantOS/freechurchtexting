@@ -4,6 +4,7 @@ import { getEffectiveChurchId } from '@/lib/api-helpers';
 import { generateAIResponse, AI_SYSTEM_PROMPTS } from '@/lib/ai-client';
 
 export const dynamic = 'force-dynamic';
+export const maxDuration = 15;
 
 export async function POST(request: NextRequest) {
   try {
@@ -33,7 +34,7 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json();
-    const { prompt, occasion, groupName } = body || {};
+    const { prompt, occasion, groupName, recipientType, selectedContactName, selectedContactCount } = body || {};
 
     if (!prompt && !occasion) {
       return NextResponse.json(
@@ -57,11 +58,19 @@ export async function POST(request: NextRequest) {
       }),
     ]);
 
+    // Determine provider based on subscription tier
+    const isBlue = church.subscriptionTier === 'blue_shared' || church.subscriptionTier === 'blue_dedicated';
+    const provider = isBlue ? 'imessage' : 'twilio';
+
     const systemPrompt = AI_SYSTEM_PROMPTS.messageWriter({
       churchName: church.name,
       recentMessages: recentMessages.map((m) => m.body),
       contactCount: contacts,
       groups: groups.map((g) => g.name),
+      provider,
+      recipientType: recipientType || (groupName ? 'group' : 'individual'),
+      recipientCount: selectedContactCount || contacts,
+      subscriptionTier: church.subscriptionTier,
     });
 
     let userPrompt = '';
@@ -70,6 +79,15 @@ export async function POST(request: NextRequest) {
       if (groupName) userPrompt += ` (sending to group: ${groupName})`;
     } else {
       userPrompt = prompt;
+    }
+
+    // Add recipient context to the user prompt
+    if (recipientType === 'individual' && selectedContactName) {
+      userPrompt += `\n\nThis message is for a single person named ${selectedContactName}.`;
+    } else if (recipientType === 'group' && groupName) {
+      userPrompt += `\n\nThis message is going to the "${groupName}" group (${selectedContactCount || 'multiple'} people).`;
+    } else if (recipientType === 'all') {
+      userPrompt += `\n\nThis message is going to all ${selectedContactCount || contacts} opted-in contacts.`;
     }
 
     const result = await generateAIResponse(

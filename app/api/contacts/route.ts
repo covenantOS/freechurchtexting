@@ -14,6 +14,24 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: error || 'Unauthorized' }, { status: 401 });
     }
 
+    const url = new URL(request.url);
+
+    // Return all unique tags used across contacts for this church
+    if (url.searchParams.get('uniqueTags') === 'true') {
+      const contacts = await prisma.contact.findMany({
+        where: { churchId },
+        select: { tags: true },
+      });
+      const tagSet = new Set<string>();
+      for (const c of contacts) {
+        const arr = Array.isArray(c.tags) ? c.tags : [];
+        for (const t of arr) {
+          if (typeof t === 'string' && t.trim()) tagSet.add(t.trim());
+        }
+      }
+      return NextResponse.json({ tags: Array.from(tagSet).sort() });
+    }
+
     const contacts = await prisma.contact.findMany({
       where: { churchId },
       orderBy: { createdAt: 'desc' },

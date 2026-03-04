@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { useSession } from 'next-auth/react';
 import { AppLayout } from '@/components/layout/app-layout';
@@ -39,6 +39,7 @@ interface Template {
   id: string;
   name: string;
   body: string;
+  category?: string;
 }
 
 interface Message {
@@ -62,7 +63,7 @@ interface ScheduledMessage {
   sender: { name: string; email: string };
 }
 
-export default function MessagesPage() {
+function MessagesPageContent() {
   const { data: session } = useSession() || {};
   const { effectiveSubscriptionTier, adminFetch, effectiveChurchId } = useAdmin();
   const searchParams = useSearchParams();
@@ -83,7 +84,8 @@ export default function MessagesPage() {
   const [loading, setLoading] = React.useState(true);
   const [sending, setSending] = React.useState(false);
   const [error, setError] = React.useState('');
-  const [success, setSuccess] = React.useState('');
+  const [successMessage, setSuccessMessage] = React.useState('');
+  const successTimerRef = React.useRef<ReturnType<typeof setTimeout> | null>(null);
 
   // Refetch data when church context changes (admin impersonation)
   React.useEffect(() => {
@@ -96,6 +98,15 @@ export default function MessagesPage() {
     setLoading(true);
     fetchData();
   }, [effectiveChurchId]);
+
+  // Clean up success timer on unmount
+  React.useEffect(() => {
+    return () => {
+      if (successTimerRef.current) {
+        clearTimeout(successTimerRef.current);
+      }
+    };
+  }, []);
 
   const fetchData = async () => {
     try {
@@ -129,12 +140,43 @@ export default function MessagesPage() {
     }
   };
 
+  // Light refresh: only refetch messages and scheduled messages (not contacts/groups/templates)
+  const refreshMessagesOnly = async () => {
+    try {
+      const [messagesRes, scheduledRes] = await Promise.all([
+        adminFetch('/api/messages'),
+        adminFetch('/api/scheduled-messages'),
+      ]);
+      const messagesData = await messagesRes.json();
+      const scheduledData = await scheduledRes.json();
+      setMessages(messagesData?.messages || []);
+      setScheduledMessages(scheduledData?.scheduledMessages || []);
+    } catch (err) {
+      console.error('Failed to refresh messages:', err);
+    }
+  };
+
+  const showSuccess = (message: string) => {
+    // Clear any existing timer
+    if (successTimerRef.current) {
+      clearTimeout(successTimerRef.current);
+    }
+    setSuccessMessage(message);
+    // Auto-dismiss after 4 seconds
+    successTimerRef.current = setTimeout(() => {
+      setSuccessMessage('');
+      successTimerRef.current = null;
+    }, 4000);
+  };
+
   const handleSend = async (data: SendMessageData) => {
     setError('');
-    setSuccess('');
+    setSuccessMessage('');
     setSending(true);
 
     try {
+      let recipientCount = 0;
+
       if (data.isScheduled) {
         // Create scheduled message
         const res = await adminFetch('/api/scheduled-messages', {
@@ -152,7 +194,7 @@ export default function MessagesPage() {
         if (!res.ok) {
           throw new Error(result?.error || 'Failed to schedule');
         }
-        setSuccess('Message scheduled successfully!');
+        showSuccess('Message scheduled successfully!');
       } else {
         // Send immediately (or queue for drip/random)
         const sendPayload: Record<string, unknown> = {
@@ -170,6 +212,7 @@ export default function MessagesPage() {
         if (data.sendingMode === 'random') {
           sendPayload.randomMinSeconds = data.randomMinSeconds;
           sendPayload.randomMaxSeconds = data.randomMaxSeconds;
+          sendPayload.randomBatchSize = data.randomBatchSize;
         }
 
         const res = await adminFetch('/api/messages/send', {
@@ -183,16 +226,37 @@ export default function MessagesPage() {
           throw new Error(result?.error || 'Failed to send');
         }
 
+        // Get recipient count from result for the success message
+        recipientCount = result?.message?.totalRecipients || result?.stats?.sent || result?.stats?.queued || 1;
+
+        // Optimistically add the new message to the top of the list
+        if (result?.message) {
+          setMessages((prev) => [
+            {
+              id: result.message.id,
+              type: result.message.type || (data.recipientType === 'individual' ? 'individual' : 'blast'),
+              body: data.body,
+              status: result.message.status || 'sent',
+              segmentsUsed: result.message.segmentsUsed || 0,
+              totalRecipients: recipientCount,
+              createdAt: result.message.createdAt || new Date().toISOString(),
+              recipientGroupId: result.message.recipientGroupId || null,
+            },
+            ...prev,
+          ]);
+        }
+
         const modeLabel =
           data.sendingMode === 'drip'
             ? 'queued (drip mode)'
             : data.sendingMode === 'random'
               ? 'queued (random mode)'
               : 'sent';
-        setSuccess(`Message ${modeLabel} successfully!`);
+        showSuccess(`Message ${modeLabel} to ${recipientCount} recipient${recipientCount !== 1 ? 's' : ''}!`);
       }
 
-      fetchData();
+      // Refresh messages/scheduled in background (no loading state, no full reload)
+      refreshMessagesOnly();
     } catch (err: any) {
       setError(err?.message || 'Failed to send message');
       throw err; // re-throw so the composer knows sending failed
@@ -212,8 +276,8 @@ export default function MessagesPage() {
         throw new Error(data?.error || 'Failed to cancel');
       }
 
-      setSuccess('Scheduled message cancelled');
-      fetchData();
+      showSuccess('Scheduled message cancelled');
+      refreshMessagesOnly();
     } catch (err: any) {
       setError(err?.message || 'Failed to cancel scheduled message');
     }
@@ -306,22 +370,16 @@ export default function MessagesPage() {
 
         {/* Compose Tab */}
         {activeTab === 'compose' && (
-          <div className="max-w-3xl mx-auto">
+          <div className="max-w-5xl mx-auto">
             {error && (
               <div className="mb-4 p-4 bg-red-50 border border-red-200 rounded-lg flex items-center gap-3 text-red-600">
                 <AlertCircle className="h-5 w-5 flex-shrink-0" />
                 <span>{error}</span>
               </div>
             )}
-            {success && (
-              <div className="mb-4 p-4 bg-green-50 border border-green-200 rounded-lg flex items-center gap-3 text-green-600">
-                <CheckCircle2 className="h-5 w-5 flex-shrink-0" />
-                <span>{success}</span>
-              </div>
-            )}
 
             <Card>
-              <CardContent className="p-6">
+              <CardContent className="p-4 lg:p-6">
                 <MessageComposer
                   contacts={contacts}
                   groups={groups}
@@ -332,6 +390,7 @@ export default function MessagesPage() {
                   onSend={handleSend}
                   initialRecipientType={initialType as 'individual' | 'group' | 'all'}
                   initialContactId={initialContactId}
+                  successMessage={successMessage}
                 />
               </CardContent>
             </Card>
@@ -470,5 +529,13 @@ export default function MessagesPage() {
         )}
       </div>
     </AppLayout>
+  );
+}
+
+export default function MessagesPage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen flex items-center justify-center bg-gray-50"><div className="h-8 w-8 border-2 border-brand-500 border-t-transparent rounded-full animate-spin" /></div>}>
+      <MessagesPageContent />
+    </Suspense>
   );
 }

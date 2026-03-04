@@ -9,8 +9,9 @@ import { Modal } from '@/components/ui/modal';
 import { Textarea } from '@/components/ui/textarea';
 import { Select } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
-import { Plus, FileText, Edit2, Trash2, Copy } from 'lucide-react';
+import { Plus, FileText, Edit2, Trash2, Copy, RotateCcw, Shield } from 'lucide-react';
 import { useAdmin } from '@/lib/admin-context';
+import { DEFAULT_TEMPLATE_NAMES } from '@/lib/default-templates';
 
 interface Template {
   id: string;
@@ -35,6 +36,10 @@ const CATEGORY_COLORS: Record<string, string> = {
   volunteer: '#EC4899',
 };
 
+function isBuiltIn(name: string): boolean {
+  return DEFAULT_TEMPLATE_NAMES.includes(name);
+}
+
 export default function TemplatesPage() {
   const { adminFetch, effectiveChurchId } = useAdmin();
   const [templates, setTemplates] = React.useState<Template[]>([]);
@@ -44,6 +49,7 @@ export default function TemplatesPage() {
   const [formData, setFormData] = React.useState({ name: '', body: '', category: 'general' });
   const [formError, setFormError] = React.useState('');
   const [formLoading, setFormLoading] = React.useState(false);
+  const [resetting, setResetting] = React.useState(false);
 
   // Refetch when church context changes (admin impersonation)
   React.useEffect(() => {
@@ -107,8 +113,13 @@ export default function TemplatesPage() {
     }
   };
 
-  const handleDelete = async (id: string) => {
-    if (!confirm('Are you sure you want to delete this template?')) return;
+  const handleDelete = async (id: string, name: string) => {
+    const builtIn = isBuiltIn(name);
+    const message = builtIn
+      ? 'This is a built-in template. Are you sure you want to delete it? You can restore it later with "Reset Defaults".'
+      : 'Are you sure you want to delete this template?';
+
+    if (!confirm(message)) return;
 
     try {
       await adminFetch(`/api/templates/${id}`, { method: 'DELETE' });
@@ -118,9 +129,36 @@ export default function TemplatesPage() {
     }
   };
 
+  const handleResetDefaults = async () => {
+    if (!confirm('This will restore any missing default templates. Your custom templates will not be affected. Continue?')) return;
+
+    setResetting(true);
+    try {
+      const res = await adminFetch('/api/templates/reset-defaults', { method: 'POST' });
+      const data = await res.json();
+      if (res.ok) {
+        if (data?.restored > 0) {
+          fetchTemplates();
+        } else {
+          alert(data?.message || 'All default templates already exist.');
+        }
+      } else {
+        alert(data?.error || 'Failed to reset defaults');
+      }
+    } catch (error) {
+      console.error('Failed to reset defaults:', error);
+    } finally {
+      setResetting(false);
+    }
+  };
+
   const copyToClipboard = (text: string) => {
     navigator?.clipboard?.writeText?.(text);
   };
+
+  // Count how many default templates are missing
+  const existingNames = new Set(templates.map((t) => t.name));
+  const missingDefaults = DEFAULT_TEMPLATE_NAMES.filter((name) => !existingNames.has(name)).length;
 
   return (
     <AppLayout>
@@ -130,9 +168,17 @@ export default function TemplatesPage() {
             <h1 className="text-2xl font-semibold text-gray-900">Templates</h1>
             <p className="text-gray-500 mt-1">Save and reuse your most common messages</p>
           </div>
-          <Button onClick={openCreate}>
-            <Plus className="h-4 w-4" /> Create Template
-          </Button>
+          <div className="flex gap-2">
+            {missingDefaults > 0 && (
+              <Button variant="outline" onClick={handleResetDefaults} disabled={resetting}>
+                <RotateCcw className={`h-4 w-4 ${resetting ? 'animate-spin' : ''}`} />
+                {resetting ? 'Restoring...' : `Reset Defaults (${missingDefaults})`}
+              </Button>
+            )}
+            <Button onClick={openCreate}>
+              <Plus className="h-4 w-4" /> Create Template
+            </Button>
+          </div>
         </div>
 
         {loading ? (
@@ -143,44 +189,69 @@ export default function TemplatesPage() {
               <FileText className="h-12 w-12 text-gray-400 mx-auto mb-4" />
               <h3 className="text-lg font-medium text-gray-900 mb-2">No templates yet</h3>
               <p className="text-gray-500 mb-4">Create templates to save time on common messages</p>
-              <Button onClick={openCreate}>
-                <Plus className="h-4 w-4" /> Create Template
-              </Button>
+              <div className="flex gap-2 justify-center">
+                <Button variant="outline" onClick={handleResetDefaults} disabled={resetting}>
+                  <RotateCcw className={`h-4 w-4 ${resetting ? 'animate-spin' : ''}`} />
+                  {resetting ? 'Restoring...' : 'Load Default Templates'}
+                </Button>
+                <Button onClick={openCreate}>
+                  <Plus className="h-4 w-4" /> Create Template
+                </Button>
+              </div>
             </CardContent>
           </Card>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {templates?.map?.((template) => (
-              <Card key={template?.id} className="hover:shadow-lg transition-all group">
-                <CardContent className="p-6">
-                  <div className="flex items-start justify-between mb-3">
-                    <div>
-                      <Badge
-                        style={{
-                          backgroundColor: `${CATEGORY_COLORS[template?.category] || '#3B82F6'}20`,
-                          color: CATEGORY_COLORS[template?.category] || '#3B82F6',
-                        }}
-                      >
-                        {template?.category}
-                      </Badge>
+            {templates?.map?.((template) => {
+              const builtIn = isBuiltIn(template?.name || '');
+              return (
+                <Card key={template?.id} className="hover:shadow-lg transition-all group">
+                  <CardContent className="p-6">
+                    <div className="flex items-start justify-between mb-3">
+                      <div className="flex gap-1.5 flex-wrap">
+                        <Badge
+                          style={{
+                            backgroundColor: `${CATEGORY_COLORS[template?.category] || '#3B82F6'}20`,
+                            color: CATEGORY_COLORS[template?.category] || '#3B82F6',
+                          }}
+                        >
+                          {template?.category}
+                        </Badge>
+                        {builtIn && (
+                          <Badge
+                            style={{
+                              backgroundColor: '#f0fdf4',
+                              color: '#15803d',
+                              border: '1px solid #bbf7d0',
+                            }}
+                          >
+                            <Shield className="h-3 w-3 mr-0.5" />
+                            Built-in
+                          </Badge>
+                        )}
+                      </div>
+                      <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                        <Button variant="ghost" size="icon" onClick={() => copyToClipboard(template?.body || '')}>
+                          <Copy className="h-4 w-4" />
+                        </Button>
+                        <Button variant="ghost" size="icon" onClick={() => openEdit(template)}>
+                          <Edit2 className="h-4 w-4" />
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          onClick={() => handleDelete(template?.id || '', template?.name || '')}
+                        >
+                          <Trash2 className={`h-4 w-4 ${builtIn ? 'text-orange-400' : 'text-red-500'}`} />
+                        </Button>
+                      </div>
                     </div>
-                    <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                      <Button variant="ghost" size="icon" onClick={() => copyToClipboard(template?.body || '')}>
-                        <Copy className="h-4 w-4" />
-                      </Button>
-                      <Button variant="ghost" size="icon" onClick={() => openEdit(template)}>
-                        <Edit2 className="h-4 w-4" />
-                      </Button>
-                      <Button variant="ghost" size="icon" onClick={() => handleDelete(template?.id || '')}>
-                        <Trash2 className="h-4 w-4 text-red-500" />
-                      </Button>
-                    </div>
-                  </div>
-                  <h3 className="font-semibold text-gray-900 mb-2">{template?.name}</h3>
-                  <p className="text-sm text-gray-500 line-clamp-3">{template?.body}</p>
-                </CardContent>
-              </Card>
-            ))}
+                    <h3 className="font-semibold text-gray-900 mb-2">{template?.name}</h3>
+                    <p className="text-sm text-gray-500 line-clamp-3">{template?.body}</p>
+                  </CardContent>
+                </Card>
+              );
+            })}
           </div>
         )}
       </div>

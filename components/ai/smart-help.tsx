@@ -42,23 +42,61 @@ export function SmartHelp({ context }: SmartHelpProps) {
   const [answer, setAnswer] = React.useState('');
   const [navLinks, setNavLinks] = React.useState<Array<{ label: string; path: string }>>([]);
   const [loading, setLoading] = React.useState(false);
+  const [slowLoading, setSlowLoading] = React.useState<string>('');
   const [error, setError] = React.useState('');
 
-  // Derive activeTab from the URL hash if present
-  const activeTab = typeof window !== 'undefined' ? window.location.hash?.replace('#', '') : '';
+  // Derive activeTab from URL search params (pages use ?tab=, not #hash)
+  const getActiveTab = () => {
+    if (typeof window === 'undefined') return '';
+    const params = new URLSearchParams(window.location.search);
+    return params.get('tab') || '';
+  };
+
+  // Read DOM data attributes for richer context
+  const getPageContext = () => {
+    if (typeof window === 'undefined') return {};
+    const recipientTypeEl = document.querySelector('[data-recipient-type]');
+    const sendingModeEl = document.querySelector('[data-sending-mode]');
+    const selectedContactEl = document.querySelector('[data-selected-contact]');
+    return {
+      recipientType: recipientTypeEl?.getAttribute('data-recipient-type') || undefined,
+      sendingMode: sendingModeEl?.getAttribute('data-sending-mode') || undefined,
+      selectedContactName: selectedContactEl?.getAttribute('data-selected-contact') || undefined,
+      currentPath: window.location.pathname,
+    };
+  };
 
   const askQuestion = async () => {
     if (!question.trim()) return;
     setLoading(true);
+    setSlowLoading('');
     setError('');
     setAnswer('');
     setNavLinks([]);
 
+    // Show progressive loading feedback
+    const slowTimer = setTimeout(() => {
+      setSlowLoading('Taking longer than expected...');
+    }, 5000);
+    const verySlowTimer = setTimeout(() => {
+      setSlowLoading('Try a simpler question or refresh');
+    }, 10000);
+
     try {
+      const activeTab = getActiveTab();
+      const pageContext = getPageContext();
+
       const res = await adminFetch('/api/ai/help', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ question, context, activeTab: activeTab || undefined }),
+        body: JSON.stringify({
+          question,
+          context,
+          activeTab: activeTab || undefined,
+          recipientType: pageContext.recipientType,
+          sendingMode: pageContext.sendingMode,
+          selectedContactName: pageContext.selectedContactName,
+        }),
       });
 
       const data = await res.json();
@@ -76,7 +114,10 @@ export function SmartHelp({ context }: SmartHelpProps) {
     } catch (err: any) {
       setError(err?.message || 'Failed to get help');
     } finally {
+      clearTimeout(slowTimer);
+      clearTimeout(verySlowTimer);
       setLoading(false);
+      setSlowLoading('');
     }
   };
 
@@ -134,6 +175,10 @@ export function SmartHelp({ context }: SmartHelpProps) {
               </div>
             )}
           </div>
+        )}
+
+        {loading && slowLoading && (
+          <p className="text-xs text-amber-600 text-center animate-pulse">{slowLoading}</p>
         )}
 
         {error && (

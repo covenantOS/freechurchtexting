@@ -2,8 +2,6 @@
 @tailwind components;
 @tailwind utilities;
 
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
-
 :root {
   --background: #ffffff;
   --foreground: #111111;
@@ -26,7 +24,6 @@ body {
 }
 
 body {
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   color: var(--foreground);
   background: var(--background);
   -webkit-font-smoothing: antialiased;
@@ -155,14 +152,6 @@ html {
   animation: shimmer 2s infinite;
 }
 
-/* Stagger delays for children */
-.stagger-1 { animation-delay: 0.1s; }
-.stagger-2 { animation-delay: 0.2s; }
-.stagger-3 { animation-delay: 0.3s; }
-.stagger-4 { animation-delay: 0.4s; }
-.stagger-5 { animation-delay: 0.5s; }
-.stagger-6 { animation-delay: 0.6s; }
-
 /* Gradient text */
 .gradient-text {
   background: linear-gradient(135deg, #C28C88 0%, #8d5d5a 50%, #C28C88 100%);
@@ -172,11 +161,9 @@ html {
   background-size: 200% auto;
 }
 
-/* Glass effect */
+/* Glass effect - lightweight version without backdrop-filter to avoid paint thrashing */
 .glass {
-  background: rgba(255, 255, 255, 0.8);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
+  background: rgba(255, 255, 255, 0.92);
 }
 
 /* Hero gradient */

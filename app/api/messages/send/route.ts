@@ -57,7 +57,11 @@ export async function POST(request: NextRequest) {
       dripIntervalSeconds,
       randomMinSeconds,
       randomMaxSeconds,
+      randomBatchSize: rawRandomBatchSize,
     } = body || {};
+
+    // Default batch size to 1, clamp between 1 and 50
+    const randomBatchSize = Math.max(1, Math.min(50, parseInt(rawRandomBatchSize) || 1));
 
     if (!messageBody) {
       return NextResponse.json({ error: 'Message body is required' }, { status: 400 });
@@ -254,16 +258,24 @@ export async function POST(request: NextRequest) {
         let scheduledSendAt: Date;
 
         if (i === 0) {
-          // First recipient sends immediately
+          // First batch sends immediately
           scheduledSendAt = now;
         } else if (sendingMode === 'drip') {
           cumulativeOffsetMs = i * dripIntervalSeconds * 1000;
           scheduledSendAt = new Date(now.getTime() + cumulativeOffsetMs);
         } else {
-          // random mode: add a random interval since the last message
-          const randomDelay =
-            (randomMinSeconds + Math.random() * (randomMaxSeconds - randomMinSeconds)) * 1000;
-          cumulativeOffsetMs += randomDelay;
+          // random mode: use batch size to group messages at the same send time
+          // Only add a random delay when starting a new batch
+          const batchIndex = Math.floor(i / randomBatchSize);
+          const prevBatchIndex = Math.floor((i - 1) / randomBatchSize);
+
+          if (batchIndex !== prevBatchIndex) {
+            // New batch: add a random interval
+            const randomDelay =
+              (randomMinSeconds + Math.random() * (randomMaxSeconds - randomMinSeconds)) * 1000;
+            cumulativeOffsetMs += randomDelay;
+          }
+          // Same batch: keep same offset (messages in a batch fire together)
           scheduledSendAt = new Date(now.getTime() + cumulativeOffsetMs);
         }
 

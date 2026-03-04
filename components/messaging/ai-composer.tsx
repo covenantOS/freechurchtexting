@@ -30,6 +30,19 @@ export function AIComposer({ onInsert, groupName }: AIComposerProps) {
   const [result, setResult] = React.useState('');
   const [error, setError] = React.useState('');
 
+  // Read DOM data attributes for recipient context
+  const getRecipientContext = () => {
+    if (typeof window === 'undefined') return {};
+    const recipientTypeEl = document.querySelector('[data-recipient-type]');
+    const selectedContactEl = document.querySelector('[data-selected-contact]');
+    const sendingModeEl = document.querySelector('[data-sending-mode]');
+    return {
+      recipientType: recipientTypeEl?.getAttribute('data-recipient-type') || undefined,
+      selectedContactName: selectedContactEl?.getAttribute('data-selected-contact') || undefined,
+      sendingMode: sendingModeEl?.getAttribute('data-sending-mode') || undefined,
+    };
+  };
+
   const generate = async (userPrompt?: string) => {
     const promptToUse = userPrompt || prompt;
     if (!promptToUse.trim()) return;
@@ -39,6 +52,11 @@ export function AIComposer({ onInsert, groupName }: AIComposerProps) {
     setResult('');
 
     try {
+      const recipientContext = getRecipientContext();
+      const recipientCount = recipientContext.recipientType === 'all'
+        ? undefined  // the API will use the total contact count
+        : undefined;
+
       const res = await adminFetch('/api/ai/compose', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -46,6 +64,9 @@ export function AIComposer({ onInsert, groupName }: AIComposerProps) {
           occasion: userPrompt ? promptToUse : undefined,
           prompt: userPrompt ? undefined : promptToUse,
           groupName,
+          recipientType: recipientContext.recipientType,
+          selectedContactName: recipientContext.selectedContactName,
+          selectedContactCount: recipientCount,
         }),
       });
 

@@ -67,7 +67,7 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
       <aside
         className={cn(
           'fixed left-0 bottom-0 w-64 bg-white border-r border-gray-100 z-30 transition-transform duration-300',
-          isImpersonating ? 'top-24' : 'top-16',
+          'top-16',
           'md:translate-x-0',
           isOpen ? 'translate-x-0' : '-translate-x-full'
         )}
@@ -95,8 +95,8 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
             );
           })}
 
-          {/* Admin Link - Only for Super Admins */}
-          {isSuperAdmin && (
+          {/* Admin Link - Only for Super Admins when NOT impersonating */}
+          {isSuperAdmin && !isImpersonating && (
             <>
               <div className="my-4 border-t border-gray-200" />
               <Link

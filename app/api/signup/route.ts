@@ -3,6 +3,7 @@ import { prisma } from '@/lib/db';
 import bcrypt from 'bcryptjs';
 import { sendEmail, sendAdminNotification, getWelcomeEmailHtml } from '@/lib/email';
 import { checkRateLimit } from '@/lib/rate-limit';
+import { DEFAULT_TEMPLATES } from '@/lib/default-templates';
 
 export const dynamic = 'force-dynamic';
 
@@ -73,6 +74,16 @@ export async function POST(request: NextRequest) {
           passwordHash,
           role: 'admin',
         },
+      });
+
+      // Seed default templates for the new church
+      await tx.template.createMany({
+        data: DEFAULT_TEMPLATES.map((t) => ({
+          churchId: church.id,
+          name: t.name,
+          body: t.body,
+          category: t.category,
+        })),
       });
 
       return { church, user };

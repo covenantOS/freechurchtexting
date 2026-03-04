@@ -17,31 +17,31 @@ export function AdminBar() {
   }
 
   return (
-    <div className="fixed top-0 left-0 right-0 bg-gradient-to-r from-amber-600 to-amber-500 text-white py-1.5 px-4 z-50 shadow-lg">
+    <div className="fixed top-0 left-0 right-0 bg-amber-600/85 backdrop-blur-sm text-white py-1 px-4 z-[100] shadow-md">
       <div className="max-w-7xl mx-auto flex items-center justify-between">
-        <div className="flex items-center gap-3">
-          <Eye className="h-4 w-4" />
-          <span className="font-medium text-sm">Admin View:</span>
-          <Badge className="bg-white/20 text-white border-0">
+        <div className="flex items-center gap-2">
+          <Eye className="h-3.5 w-3.5 flex-shrink-0" />
+          <span className="font-medium text-xs hidden sm:inline">Admin View:</span>
+          <Badge className="bg-white/20 text-white border-0 text-xs py-0">
             {impersonatedUser.churchName}
           </Badge>
-          <span className="text-amber-100 text-sm">({impersonatedUser.email})</span>
+          <span className="text-amber-100 text-xs hidden md:inline">({impersonatedUser.email})</span>
         </div>
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2">
           <Link href="/admin">
-            <Button size="sm" variant="ghost" className="text-white hover:bg-white/20 h-7 text-xs">
-              <ArrowLeft className="h-3.5 w-3.5 mr-1" />
-              Back to Admin
+            <Button size="sm" variant="ghost" className="text-white hover:bg-white/20 h-6 text-xs px-2">
+              <ArrowLeft className="h-3 w-3 mr-1" />
+              <span className="hidden sm:inline">Back to Admin</span>
             </Button>
           </Link>
           <Button
             size="sm"
             variant="ghost"
-            className="text-white hover:bg-white/20 h-7 text-xs"
+            className="text-white hover:bg-white/20 h-6 text-xs px-2"
             onClick={() => { clearImpersonation(); router.push('/admin'); }}
           >
-            <X className="h-3.5 w-3.5 mr-1" />
-            Exit View Mode
+            <X className="h-3 w-3 mr-1" />
+            Exit
           </Button>
         </div>
       </div>

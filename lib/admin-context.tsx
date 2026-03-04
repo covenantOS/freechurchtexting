@@ -100,18 +100,16 @@ export function AdminProvider({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     if (prevChurchIdRef.current !== effectiveChurchId && prevChurchIdRef.current !== null) {
-      // Church context changed -- wipe cached query data for church-specific keys
-      // so stale data from the previous church is never shown while new data loads.
-      // Defer until after navigation settles to avoid wiping layout/CSS caches.
-      setTimeout(() => {
-        queryClient.removeQueries({ queryKey: ['dashboard'] });
-        queryClient.removeQueries({ queryKey: ['contacts'] });
-        queryClient.removeQueries({ queryKey: ['messages'] });
-        queryClient.removeQueries({ queryKey: ['groups'] });
-        queryClient.removeQueries({ queryKey: ['templates'] });
-        queryClient.removeQueries({ queryKey: ['conversations'] });
-        queryClient.removeQueries({ queryKey: ['scheduled'] });
-      }, 0);
+      // Church context changed -- invalidate (not remove) cached query data so that
+      // stale data remains visible while fresh data loads in the background,
+      // preventing blank page flashes during church switches.
+      queryClient.invalidateQueries({ queryKey: ['dashboard'] });
+      queryClient.invalidateQueries({ queryKey: ['contacts'] });
+      queryClient.invalidateQueries({ queryKey: ['messages'] });
+      queryClient.invalidateQueries({ queryKey: ['groups'] });
+      queryClient.invalidateQueries({ queryKey: ['templates'] });
+      queryClient.invalidateQueries({ queryKey: ['conversations'] });
+      queryClient.invalidateQueries({ queryKey: ['scheduled'] });
     }
     prevChurchIdRef.current = effectiveChurchId;
   }, [effectiveChurchId, queryClient]);
