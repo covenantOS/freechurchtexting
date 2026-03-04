@@ -1,0 +1,328 @@
+generator client {
+    provider      = "prisma-client-js"
+    binaryTargets = ["native", "rhel-openssl-3.0.x"]
+}
+
+datasource db {
+    provider  = "postgresql"
+    url       = env("DATABASE_URL")
+    directUrl = env("DIRECT_URL")
+}
+
+enum Provider {
+  twilio
+  telnyx
+}
+
+enum A2PStatus {
+  not_started
+  brand_submitted
+  brand_approved
+  campaign_submitted
+  campaign_approved
+  fully_approved
+  rejected
+}
+
+enum SubscriptionTier {
+  free
+  blue_shared
+  blue_dedicated
+}
+
+enum UserRole {
+  admin
+  member
+}
+
+enum OptInStatus {
+  opted_in
+  opted_out
+  pending
+}
+
+enum ContactSource {
+  manual
+  csv_import
+}
+
+enum MessageType {
+  individual
+  blast
+  imessage
+  imessage_blast
+}
+
+enum MessageStatus {
+  queued
+  sending
+  sent
+  delivered
+  failed
+}
+
+enum TemplateCategory {
+  general
+  event
+  prayer
+  welcome
+  volunteer
+}
+
+model Church {
+  id                          String           @id @default(uuid())
+  name                        String
+  leaderName                  String?
+  email                       String           @unique
+  phone                       String?
+  address                     String?
+  city                        String?
+  state                       String?
+  zip                         String?
+  website                     String?
+  ein                         String?
+  provider                    Provider         @default(twilio)
+  providerAccountSid          String?
+  providerAuthToken           String?
+  providerPhoneNumber         String?
+  providerMessagingServiceSid String?
+  a2pStatus                   A2PStatus        @default(not_started)
+  subscriptionTier            SubscriptionTier @default(free)
+  onboardingCompleted         Boolean          @default(false)
+  timezone                    String           @default("America/New_York")
+  createdAt                   DateTime         @default(now())
+  updatedAt                   DateTime         @updatedAt
+
+  users             User[]
+  contacts          Contact[]
+  groups            Group[]
+  messages          Message[]
+  templates         Template[]
+  teamInvites       TeamInvite[]
+  scheduledMessages ScheduledMessage[]
+  inboundMessages   InboundMessage[]
+  autoReplies       AutoReply[]
+
+  @@map("churches")
+}
+
+model User {
+  id           String   @id @default(uuid())
+  churchId     String
+  name         String
+  email        String   @unique
+  passwordHash String
+  role         UserRole @default(member)
+  isSuperAdmin Boolean  @default(false)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  church            Church             @relation(fields: [churchId], references: [id], onDelete: Cascade)
+  messages          Message[]
+  scheduledMessages ScheduledMessage[]
+
+  @@map("users")
+}
+
+model Contact {
+  id          String       @id @default(uuid())
+  churchId    String
+  firstName   String
+  lastName    String?
+  phone       String
+  email       String?
+  groups      Json         @default("[]")
+  tags        Json         @default("[]")
+  notes       String?
+  optInStatus OptInStatus  @default(pending)
+  optInDate   DateTime?
+  optOutDate  DateTime?
+  source      ContactSource @default(manual)
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+
+  church            Church             @relation(fields: [churchId], references: [id], onDelete: Cascade)
+  messageRecipients MessageRecipient[]
+  inboundMessages   InboundMessage[]
+
+  @@unique([churchId, phone])
+  @@map("contacts")
+}
+
+model Group {
+  id          String   @id @default(uuid())
+  churchId    String
+  name        String
+  description String?
+  color       String   @default("#3B82F6")
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  church Church @relation(fields: [churchId], references: [id], onDelete: Cascade)
+
+  @@unique([churchId, name])
+  @@map("groups")
+}
+
+model Message {
+  id                   String        @id @default(uuid())
+  churchId             String
+  senderUserId         String
+  type                 MessageType
+  recipientContactId   String?
+  recipientGroupId     String?
+  body                 String
+  status               MessageStatus @default(queued)
+  sentAt               DateTime?
+  providerMessageSid   String?
+  segmentsUsed         Int           @default(1)
+  totalRecipients      Int           @default(1)
+  errorMessage         String?
+  sendingMode          SendingMode   @default(instant)
+  dripIntervalSeconds  Int?
+  randomMinSeconds     Int?
+  randomMaxSeconds     Int?
+  createdAt            DateTime      @default(now())
+
+  church            Church             @relation(fields: [churchId], references: [id], onDelete: Cascade)
+  sender            User               @relation(fields: [senderUserId], references: [id])
+  messageRecipients MessageRecipient[]
+
+  @@map("messages")
+}
+
+model MessageRecipient {
+  id                 String        @id @default(uuid())
+  messageId          String
+  contactId          String
+  status             MessageStatus @default(queued)
+  providerMessageSid String?
+  errorMessage       String?
+  sentAt             DateTime?
+  scheduledSendAt    DateTime?
+
+  message Message @relation(fields: [messageId], references: [id], onDelete: Cascade)
+  contact Contact @relation(fields: [contactId], references: [id], onDelete: Cascade)
+
+  @@map("message_recipients")
+}
+
+model Template {
+  id        String           @id @default(uuid())
+  churchId  String
+  name      String
+  body      String
+  category  TemplateCategory @default(general)
+  createdAt DateTime         @default(now())
+  updatedAt DateTime         @updatedAt
+
+  church Church @relation(fields: [churchId], references: [id], onDelete: Cascade)
+
+  @@unique([churchId, name])
+  @@map("templates")
+}
+
+model PasswordResetToken {
+  id        String   @id @default(uuid())
+  userId    String
+  token     String   @unique
+  expiresAt DateTime
+  usedAt    DateTime?
+  createdAt DateTime @default(now())
+
+  @@map("password_reset_tokens")
+}
+
+model TeamInvite {
+  id        String   @id @default(uuid())
+  churchId  String
+  email     String
+  role      UserRole @default(member)
+  token     String   @unique
+  invitedBy String
+  expiresAt DateTime
+  acceptedAt DateTime?
+  createdAt DateTime @default(now())
+
+  church Church @relation(fields: [churchId], references: [id], onDelete: Cascade)
+
+  @@map("team_invites")
+}
+
+model ScheduledMessage {
+  id              String        @id @default(uuid())
+  churchId        String
+  senderUserId    String
+  type            MessageType
+  recipientGroupId String?
+  body            String
+  scheduledFor    DateTime
+  timezone        String        @default("America/New_York")
+  status          ScheduledMessageStatus @default(pending)
+  sentAt          DateTime?
+  messageId       String?
+  errorMessage    String?
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+
+  church Church @relation(fields: [churchId], references: [id], onDelete: Cascade)
+  sender User   @relation(fields: [senderUserId], references: [id])
+
+  @@map("scheduled_messages")
+}
+
+enum ScheduledMessageStatus {
+  pending
+  processing
+  sent
+  failed
+  cancelled
+}
+
+model InboundMessage {
+  id                 String   @id @default(uuid())
+  churchId           String
+  contactId          String?
+  from               String
+  to                 String
+  body               String
+  mediaUrl           String?
+  providerMessageSid String?
+  createdAt          DateTime @default(now())
+
+  church  Church   @relation(fields: [churchId], references: [id], onDelete: Cascade)
+  contact Contact? @relation(fields: [contactId], references: [id], onDelete: SetNull)
+
+  @@map("inbound_messages")
+}
+
+model AutoReply {
+  id        String   @id @default(uuid())
+  churchId  String
+  keyword   String
+  response  String
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  church Church @relation(fields: [churchId], references: [id], onDelete: Cascade)
+
+  @@unique([churchId, keyword])
+  @@map("auto_replies")
+}
+
+enum SendingMode {
+  instant
+  drip
+  random
+}
+
+model EarlyAccess {
+  id          String   @id @default(uuid())
+  name        String
+  email       String   @unique
+  churchName  String?
+  createdAt   DateTime @default(now())
+
+  @@map("early_access")
+}
