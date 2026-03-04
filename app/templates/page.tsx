@@ -9,7 +9,7 @@ import { Modal } from '@/components/ui/modal';
 import { Textarea } from '@/components/ui/textarea';
 import { Select } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
-import { Plus, FileText, Edit2, Trash2, Copy, RotateCcw, Shield } from 'lucide-react';
+import { Plus, FileText, Edit2, Trash2, Copy, RotateCcw, Shield, Eye, MessageSquare } from 'lucide-react';
 import { useAdmin } from '@/lib/admin-context';
 import { DEFAULT_TEMPLATE_NAMES } from '@/lib/default-templates';
 
@@ -21,11 +21,11 @@ interface Template {
 }
 
 const CATEGORIES = [
-  { value: 'general', label: 'General' },
-  { value: 'event', label: 'Event' },
-  { value: 'prayer', label: 'Prayer' },
-  { value: 'welcome', label: 'Welcome' },
-  { value: 'volunteer', label: 'Volunteer' },
+  { value: 'general', label: 'General', icon: '💬', color: '#3B82F6' },
+  { value: 'event', label: 'Event', icon: '📅', color: '#8B5CF6' },
+  { value: 'prayer', label: 'Prayer', icon: '🙏', color: '#10B981' },
+  { value: 'welcome', label: 'Welcome', icon: '👋', color: '#F59E0B' },
+  { value: 'volunteer', label: 'Volunteer', icon: '🤝', color: '#EC4899' },
 ];
 
 const CATEGORY_COLORS: Record<string, string> = {
@@ -35,6 +35,23 @@ const CATEGORY_COLORS: Record<string, string> = {
   welcome: '#F59E0B',
   volunteer: '#EC4899',
 };
+
+const MERGE_TAGS = [
+  { tag: '{first_name}', label: 'First Name', example: 'Sarah' },
+  { tag: '{last_name}', label: 'Last Name', example: 'Johnson' },
+  { tag: '{church_name}', label: 'Church', example: 'Grace Community' },
+  { tag: '{church_phone}', label: 'Church Phone', example: '(555) 123-4567' },
+];
+
+const SMS_SEGMENT_SIZE = 160;
+
+function resolvePreview(body: string): string {
+  let preview = body;
+  for (const mt of MERGE_TAGS) {
+    preview = preview.split(mt.tag).join(mt.example);
+  }
+  return preview || 'Your message preview will appear here...';
+}
 
 function isBuiltIn(name: string): boolean {
   return DEFAULT_TEMPLATE_NAMES.includes(name);
@@ -50,6 +67,27 @@ export default function TemplatesPage() {
   const [formError, setFormError] = React.useState('');
   const [formLoading, setFormLoading] = React.useState(false);
   const [resetting, setResetting] = React.useState(false);
+  const textareaRef = React.useRef<HTMLTextAreaElement>(null);
+
+  const insertMergeTag = (tag: string) => {
+    const textarea = textareaRef.current;
+    if (!textarea) {
+      setFormData({ ...formData, body: formData.body + tag });
+      return;
+    }
+    const start = textarea.selectionStart;
+    const end = textarea.selectionEnd;
+    const before = formData.body.substring(0, start);
+    const after = formData.body.substring(end);
+    const newBody = before + tag + after;
+    setFormData({ ...formData, body: newBody });
+    // Restore cursor position after the inserted tag
+    requestAnimationFrame(() => {
+      textarea.focus();
+      const newPos = start + tag.length;
+      textarea.setSelectionRange(newPos, newPos);
+    });
+  };
 
   // Refetch when church context changes (admin impersonation)
   React.useEffect(() => {
@@ -260,58 +298,99 @@ export default function TemplatesPage() {
         isOpen={showModal}
         onClose={() => setShowModal(false)}
         title={editingTemplate ? 'Edit Template' : 'Create Template'}
-        size="md"
+        size="lg"
       >
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={handleSubmit} className="space-y-5">
           {formError && (
             <div className="p-3 bg-red-50 border border-red-200 rounded-lg text-sm text-red-600">{formError}</div>
           )}
-          <div>
-            <label className="text-sm font-medium text-gray-700 mb-1 block">Template Name *</label>
-            <Input
-              value={formData.name}
-              onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-              placeholder="e.g., Sunday Reminder"
-              required
-            />
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label className="text-sm font-medium text-gray-700 mb-1 block">Template Name *</label>
+              <Input
+                value={formData.name}
+                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                placeholder="e.g., Sunday Reminder"
+                required
+              />
+            </div>
+            <div>
+              <label className="text-sm font-medium text-gray-700 mb-1 block">Category</label>
+              <div className="flex flex-wrap gap-2">
+                {CATEGORIES.map((cat) => (
+                  <button
+                    key={cat.value}
+                    type="button"
+                    onClick={() => setFormData({ ...formData, category: cat.value })}
+                    className={`flex items-center gap-1.5 px-3 py-2 rounded-lg border-2 text-sm font-medium transition-all ${
+                      formData.category === cat.value
+                        ? 'border-current shadow-sm'
+                        : 'border-gray-200 text-gray-500 hover:border-gray-300'
+                    }`}
+                    style={formData.category === cat.value ? { color: cat.color, borderColor: cat.color, backgroundColor: `${cat.color}10` } : {}}
+                  >
+                    <span className="text-base leading-none">{cat.icon}</span>
+                    {cat.label}
+                  </button>
+                ))}
+              </div>
+            </div>
           </div>
+
           <div>
-            <label className="text-sm font-medium text-gray-700 mb-1 block">Category</label>
-            <Select
-              value={formData.category}
-              onChange={(e) => setFormData({ ...formData, category: e.target.value })}
-              options={CATEGORIES}
-            />
-          </div>
-          <div>
-            <label className="text-sm font-medium text-gray-700 mb-1 block">Message Body *</label>
+            <div className="flex items-center justify-between mb-1">
+              <label className="text-sm font-medium text-gray-700">Message Body *</label>
+              <div className="flex items-center gap-3 text-xs text-gray-400">
+                <span>{formData.body.length} chars</span>
+                <span>{Math.ceil((formData.body.length || 1) / SMS_SEGMENT_SIZE)} SMS segment{Math.ceil((formData.body.length || 1) / SMS_SEGMENT_SIZE) !== 1 ? 's' : ''}</span>
+              </div>
+            </div>
             <Textarea
+              ref={textareaRef}
               value={formData.body}
               onChange={(e) => setFormData({ ...formData, body: e.target.value })}
               placeholder="Hi {first_name}! ..."
               rows={5}
               required
             />
-            <div className="flex gap-2 mt-2">
-              <Button
-                type="button"
-                variant="outline"
-                size="sm"
-                onClick={() => setFormData({ ...formData, body: formData.body + '{first_name}' })}
-              >
-                + first_name
-              </Button>
-              <Button
-                type="button"
-                variant="outline"
-                size="sm"
-                onClick={() => setFormData({ ...formData, body: formData.body + '{last_name}' })}
-              >
-                + last_name
-              </Button>
+            <div className="flex flex-wrap gap-1.5 mt-2">
+              <span className="text-xs text-gray-400 leading-7 mr-1">Insert:</span>
+              {MERGE_TAGS.map((mt) => (
+                <button
+                  key={mt.tag}
+                  type="button"
+                  onClick={() => insertMergeTag(mt.tag)}
+                  className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium bg-brand-50 text-brand-700 border border-brand-200 hover:bg-brand-100 hover:border-brand-300 transition-colors"
+                >
+                  <Plus className="h-3 w-3" />
+                  {mt.label}
+                </button>
+              ))}
             </div>
           </div>
-          <div className="flex justify-end gap-3 pt-4">
+
+          {/* Live Preview */}
+          {formData.body.trim() && (
+            <div>
+              <div className="flex items-center gap-1.5 mb-2">
+                <Eye className="h-3.5 w-3.5 text-gray-400" />
+                <span className="text-xs font-medium text-gray-500 uppercase tracking-wide">Live Preview</span>
+              </div>
+              <div className="bg-gray-50 rounded-xl p-4 border border-gray-200">
+                <div className="flex items-start gap-3">
+                  <div className="flex-shrink-0 h-8 w-8 rounded-full bg-brand-100 flex items-center justify-center">
+                    <MessageSquare className="h-4 w-4 text-brand-600" />
+                  </div>
+                  <div className="flex-1 bg-white rounded-xl rounded-tl-sm px-4 py-3 shadow-sm border border-gray-100">
+                    <p className="text-sm text-gray-800 whitespace-pre-wrap leading-relaxed">{resolvePreview(formData.body)}</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+
+          <div className="flex justify-end gap-3 pt-2 border-t border-gray-100">
             <Button type="button" variant="ghost" onClick={() => setShowModal(false)}>
               Cancel
             </Button>

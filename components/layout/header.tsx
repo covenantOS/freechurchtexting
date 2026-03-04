@@ -10,12 +10,13 @@ import { useAdmin } from '@/lib/admin-context';
 interface HeaderProps {
   onMenuToggle?: () => void;
   isMenuOpen?: boolean;
+  isImpersonating?: boolean;
 }
 
-export function Header({ onMenuToggle, isMenuOpen }: HeaderProps) {
+export function Header({ onMenuToggle, isMenuOpen, isImpersonating }: HeaderProps) {
   const { data: session } = useSession() || {};
   const [dropdownOpen, setDropdownOpen] = React.useState(false);
-  const { isImpersonating, impersonatedUser } = useAdmin();
+  const { impersonatedUser } = useAdmin();
   const isSuperAdmin = (session?.user as any)?.isSuperAdmin;
 
   // Determine display name: if super admin and impersonating, show impersonated church name
@@ -30,7 +31,7 @@ export function Header({ onMenuToggle, isMenuOpen }: HeaderProps) {
     : (isImpersonating && impersonatedUser ? impersonatedUser.churchName?.[0]?.toUpperCase() : session?.user?.name?.[0]?.toUpperCase?.()) || 'U';
 
   return (
-    <header className="fixed top-0 left-0 right-0 h-16 bg-white/95 backdrop-blur-sm border-b border-gray-100 z-40">
+    <header className={`fixed left-0 right-0 h-16 bg-white/95 backdrop-blur-sm border-b border-gray-100 z-40 ${isImpersonating ? 'top-8' : 'top-0'}`}>
       <div className="h-full px-4 md:px-6 flex items-center justify-between">
         <div className="flex items-center gap-4">
           <button

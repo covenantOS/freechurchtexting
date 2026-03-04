@@ -11,7 +11,6 @@ import {
   Users,
   Layers,
   MessageSquare,
-  MessagesSquare,
   FileText,
   Shield,
   Settings,
@@ -24,7 +23,6 @@ const getNavItems = (isBlue: boolean) => {
     { href: '/contacts', label: 'Contacts', icon: Users },
     { href: '/groups', label: 'Groups', icon: Layers },
     { href: '/messages', label: 'Messages', icon: MessageSquare },
-    { href: '/conversations', label: 'Conversations', icon: MessagesSquare },
     { href: '/templates', label: 'Templates', icon: FileText },
   ];
   
@@ -41,9 +39,10 @@ const getNavItems = (isBlue: boolean) => {
 interface SidebarProps {
   isOpen?: boolean;
   onClose?: () => void;
+  isImpersonating?: boolean;
 }
 
-export function Sidebar({ isOpen, onClose }: SidebarProps) {
+export function Sidebar({ isOpen, onClose, isImpersonating: isImpersonatingProp }: SidebarProps) {
   const pathname = usePathname();
   const { data: session } = useSession() || {};
   const { isImpersonating } = useAdmin();
@@ -67,7 +66,7 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
       <aside
         className={cn(
           'fixed left-0 bottom-0 w-64 bg-white border-r border-gray-100 z-30 transition-transform duration-300',
-          'top-16',
+          isImpersonatingProp ? 'top-24' : 'top-16',
           'md:translate-x-0',
           isOpen ? 'translate-x-0' : '-translate-x-full'
         )}

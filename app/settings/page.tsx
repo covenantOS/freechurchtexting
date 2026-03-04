@@ -31,6 +31,10 @@ import {
   Plus,
   Circle,
   Loader2,
+  ChevronDown,
+  ExternalLink,
+  HelpCircle,
+  BookOpen,
 } from 'lucide-react';
 import { useAdmin } from '@/lib/admin-context';
 
@@ -120,6 +124,7 @@ export default function SettingsPage() {
   // Provider state
   const [selectedProvider, setSelectedProvider] = React.useState<'twilio' | 'telnyx'>('twilio');
   const [providerVerified, setProviderVerified] = React.useState(false);
+  const [showSetupGuide, setShowSetupGuide] = React.useState(false);
 
   // A2P state
   const [a2pSubmitting, setA2pSubmitting] = React.useState(false);
@@ -690,13 +695,158 @@ export default function SettingsPage() {
                     </div>
                   </div>
 
+                  {/* Setup Guide */}
+                  <div className="border border-gray-200 rounded-lg overflow-hidden">
+                    <button
+                      type="button"
+                      onClick={() => setShowSetupGuide(!showSetupGuide)}
+                      className="w-full flex items-center justify-between px-4 py-3 bg-gray-50 hover:bg-gray-100 transition-colors text-left"
+                    >
+                      <div className="flex items-center gap-2">
+                        <BookOpen className="h-4 w-4 text-brand-500" />
+                        <span className="text-sm font-medium text-gray-700">
+                          New to {providerName}? Setup guide
+                        </span>
+                      </div>
+                      <ChevronDown className={`h-4 w-4 text-gray-400 transition-transform duration-200 ${showSetupGuide ? 'rotate-180' : ''}`} />
+                    </button>
+
+                    {showSetupGuide && (
+                      <div className="px-4 py-4 border-t border-gray-200 bg-white">
+                        {selectedProvider === 'twilio' ? (
+                          <div className="space-y-4">
+                            <div className="space-y-3">
+                              <div className="flex items-start gap-3">
+                                <span className="flex-shrink-0 h-6 w-6 rounded-full bg-orange-100 text-orange-600 flex items-center justify-center text-xs font-bold">1</span>
+                                <div>
+                                  <p className="text-sm font-medium text-gray-900">Create a Twilio account</p>
+                                  <p className="text-xs text-gray-500 mt-0.5">Sign up for free at twilio.com. You get trial credits to start.</p>
+                                  <a href="https://www.twilio.com/try-twilio" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 text-xs text-orange-600 hover:text-orange-700 mt-1 font-medium">
+                                    Go to Twilio sign-up <ExternalLink className="h-3 w-3" />
+                                  </a>
+                                </div>
+                              </div>
+
+                              <div className="flex items-start gap-3">
+                                <span className="flex-shrink-0 h-6 w-6 rounded-full bg-orange-100 text-orange-600 flex items-center justify-center text-xs font-bold">2</span>
+                                <div>
+                                  <p className="text-sm font-medium text-gray-900">Find your Account SID</p>
+                                  <p className="text-xs text-gray-500 mt-0.5">On the Twilio Console dashboard, your Account SID is displayed at the top. It starts with &quot;AC&quot;.</p>
+                                  <a href="https://console.twilio.com/" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 text-xs text-orange-600 hover:text-orange-700 mt-1 font-medium">
+                                    Open Twilio Console <ExternalLink className="h-3 w-3" />
+                                  </a>
+                                </div>
+                              </div>
+
+                              <div className="flex items-start gap-3">
+                                <span className="flex-shrink-0 h-6 w-6 rounded-full bg-orange-100 text-orange-600 flex items-center justify-center text-xs font-bold">3</span>
+                                <div>
+                                  <p className="text-sm font-medium text-gray-900">Find your Auth Token</p>
+                                  <p className="text-xs text-gray-500 mt-0.5">Right below your Account SID, click the eye icon to reveal your Auth Token. Keep this secret.</p>
+                                </div>
+                              </div>
+
+                              <div className="flex items-start gap-3">
+                                <span className="flex-shrink-0 h-6 w-6 rounded-full bg-orange-100 text-orange-600 flex items-center justify-center text-xs font-bold">4</span>
+                                <div>
+                                  <p className="text-sm font-medium text-gray-900">Buy a phone number</p>
+                                  <p className="text-xs text-gray-500 mt-0.5">Go to Phone Numbers in the sidebar to purchase a number for sending texts.</p>
+                                  <a href="https://console.twilio.com/us1/develop/phone-numbers/manage/incoming" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 text-xs text-orange-600 hover:text-orange-700 mt-1 font-medium">
+                                    Manage phone numbers <ExternalLink className="h-3 w-3" />
+                                  </a>
+                                </div>
+                              </div>
+                            </div>
+
+                            <div className="pt-2 border-t border-gray-100">
+                              <a href="https://www.twilio.com/docs/messaging/quickstart" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1.5 text-xs text-gray-500 hover:text-gray-700 font-medium">
+                                <BookOpen className="h-3.5 w-3.5" />
+                                Twilio Messaging Quickstart Docs <ExternalLink className="h-3 w-3" />
+                              </a>
+                            </div>
+                          </div>
+                        ) : (
+                          <div className="space-y-4">
+                            <div className="space-y-3">
+                              <div className="flex items-start gap-3">
+                                <span className="flex-shrink-0 h-6 w-6 rounded-full bg-green-100 text-green-600 flex items-center justify-center text-xs font-bold">1</span>
+                                <div>
+                                  <p className="text-sm font-medium text-gray-900">Create a Telnyx account</p>
+                                  <p className="text-xs text-gray-500 mt-0.5">Sign up at telnyx.com. Telnyx typically offers lower per-message costs.</p>
+                                  <a href="https://telnyx.com/sign-up" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 text-xs text-green-600 hover:text-green-700 mt-1 font-medium">
+                                    Go to Telnyx sign-up <ExternalLink className="h-3 w-3" />
+                                  </a>
+                                </div>
+                              </div>
+
+                              <div className="flex items-start gap-3">
+                                <span className="flex-shrink-0 h-6 w-6 rounded-full bg-green-100 text-green-600 flex items-center justify-center text-xs font-bold">2</span>
+                                <div>
+                                  <p className="text-sm font-medium text-gray-900">Create an API Key</p>
+                                  <p className="text-xs text-gray-500 mt-0.5">In the Telnyx Portal, go to Auth &gt; API Keys and generate a new key. It starts with &quot;KEY_&quot;.</p>
+                                  <a href="https://portal.telnyx.com/#/app/api-keys" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 text-xs text-green-600 hover:text-green-700 mt-1 font-medium">
+                                    Open API Keys page <ExternalLink className="h-3 w-3" />
+                                  </a>
+                                </div>
+                              </div>
+
+                              <div className="flex items-start gap-3">
+                                <span className="flex-shrink-0 h-6 w-6 rounded-full bg-green-100 text-green-600 flex items-center justify-center text-xs font-bold">3</span>
+                                <div>
+                                  <p className="text-sm font-medium text-gray-900">Set up a Messaging Profile</p>
+                                  <p className="text-xs text-gray-500 mt-0.5">Go to Messaging &gt; Messaging Profiles and create one to enable SMS sending.</p>
+                                  <a href="https://portal.telnyx.com/#/app/messaging" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 text-xs text-green-600 hover:text-green-700 mt-1 font-medium">
+                                    Open Messaging Profiles <ExternalLink className="h-3 w-3" />
+                                  </a>
+                                </div>
+                              </div>
+
+                              <div className="flex items-start gap-3">
+                                <span className="flex-shrink-0 h-6 w-6 rounded-full bg-green-100 text-green-600 flex items-center justify-center text-xs font-bold">4</span>
+                                <div>
+                                  <p className="text-sm font-medium text-gray-900">Buy a phone number</p>
+                                  <p className="text-xs text-gray-500 mt-0.5">Purchase a number from Numbers &gt; Search &amp; Buy, then assign it to your messaging profile.</p>
+                                  <a href="https://portal.telnyx.com/#/app/numbers/search-numbers" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 text-xs text-green-600 hover:text-green-700 mt-1 font-medium">
+                                    Buy a number <ExternalLink className="h-3 w-3" />
+                                  </a>
+                                </div>
+                              </div>
+                            </div>
+
+                            <div className="pt-2 border-t border-gray-100">
+                              <a href="https://developers.telnyx.com/docs/messaging/quickstarts/sending-sms" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1.5 text-xs text-gray-500 hover:text-gray-700 font-medium">
+                                <BookOpen className="h-3.5 w-3.5" />
+                                Telnyx SMS Quickstart Docs <ExternalLink className="h-3 w-3" />
+                              </a>
+                            </div>
+                          </div>
+                        )}
+
+                        <div className="mt-4 p-3 bg-brand-50 rounded-lg border border-brand-100">
+                          <div className="flex items-start gap-2">
+                            <HelpCircle className="h-4 w-4 text-brand-500 flex-shrink-0 mt-0.5" />
+                            <div>
+                              <p className="text-xs font-medium text-brand-700">Need help with setup?</p>
+                              <p className="text-xs text-brand-600 mt-0.5">
+                                Our support team can walk you through the entire process.{' '}
+                                <a href="https://churchposting.com" target="_blank" rel="noopener noreferrer" className="underline font-medium">
+                                  Contact support
+                                </a>
+                              </p>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+
                   {/* Dynamic Credential Fields */}
                   {selectedProvider === 'twilio' ? (
                     <>
                       <div>
                         <label className="text-sm font-medium text-gray-700 mb-1 flex items-center gap-1">
                           Account SID
-                          <InfoTooltip content="Found on your Twilio Console dashboard" />
+                          <InfoTooltip content="Your unique Twilio account identifier. Found at the top of your Twilio Console dashboard. Starts with 'AC'." />
                         </label>
                         <Input
                           value={twilioData.accountSid}
@@ -707,7 +857,7 @@ export default function SettingsPage() {
                       <div>
                         <label className="text-sm font-medium text-gray-700 mb-1 flex items-center gap-1">
                           Auth Token
-                          <InfoTooltip content="Keep this secret! Below Account SID on Console" />
+                          <InfoTooltip content="Your secret authentication token. Found below your Account SID on the Twilio Console. Click the eye icon to reveal it. Never share this publicly." />
                         </label>
                         <div className="relative">
                           <Input
@@ -730,7 +880,7 @@ export default function SettingsPage() {
                     <div>
                       <label className="text-sm font-medium text-gray-700 mb-1 flex items-center gap-1">
                         API Key
-                        <InfoTooltip content="Find this in your Telnyx Portal under API Keys" />
+                        <InfoTooltip content="Your Telnyx API key for authentication. Find it in the Telnyx Portal under Auth > API Keys. Starts with 'KEY_'. Generate a new one if needed." />
                       </label>
                       <div className="relative">
                         <Input

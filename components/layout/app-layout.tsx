@@ -20,7 +20,7 @@ export function AppLayout({ children }: AppLayoutProps) {
   const router = useRouter();
   const pathname = usePathname();
   const [sidebarOpen, setSidebarOpen] = React.useState(false);
-  const { isImpersonating } = useAdmin();
+  const { isImpersonating, hydrated, isSuperAdmin: adminIsSuperAdmin } = useAdmin();
 
   React.useEffect(() => {
     if (status === 'unauthenticated') {
@@ -32,8 +32,10 @@ export function AppLayout({ children }: AppLayoutProps) {
   const isSuperAdmin = (session?.user as any)?.isSuperAdmin;
 
   // Redirect super admin to /admin when NOT impersonating and on a protected route
+  // Wait for hydration so sessionStorage impersonation state is loaded first
   const protectedRoutes = ['/dashboard', '/messages', '/contacts', '/groups', '/templates', '/conversations', '/settings', '/compliance', '/onboarding'];
   React.useEffect(() => {
+    if (!hydrated) return;
     if (isSuperAdmin && !isImpersonating && pathname) {
       const isProtectedRoute = protectedRoutes.some(
         (route) => pathname === route || pathname.startsWith(route + '/')
@@ -42,13 +44,25 @@ export function AppLayout({ children }: AppLayoutProps) {
         router.replace('/admin');
       }
     }
-  }, [isSuperAdmin, isImpersonating, pathname, router]);
+  }, [isSuperAdmin, isImpersonating, pathname, router, hydrated]);
 
   React.useEffect(() => {
     if (session?.user && !isSuperAdmin && !isImpersonating && !session?.user?.onboardingCompleted && pathname !== '/onboarding') {
       router.replace('/onboarding');
     }
   }, [session, pathname, router, isSuperAdmin, isImpersonating]);
+
+  // Show loading spinner while admin context hydrates (prevents false redirect)
+  if (isSuperAdmin && !hydrated) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+        <div className="flex flex-col items-center gap-4">
+          <div className="h-8 w-8 border-2 border-brand-500 border-t-transparent rounded-full animate-spin" />
+          <p className="text-sm text-gray-500">Loading admin context...</p>
+        </div>
+      </div>
+    );
+  }
 
   if (status === 'loading') {
     return (
@@ -100,9 +114,9 @@ export function AppLayout({ children }: AppLayoutProps) {
   return (
     <div className="min-h-screen bg-gray-50/50 flex flex-col">
       <AdminBar />
-      <Header onMenuToggle={() => setSidebarOpen(!sidebarOpen)} isMenuOpen={sidebarOpen} />
-      <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
-      <main className="flex-1 md:pl-64 pt-16">
+      <Header onMenuToggle={() => setSidebarOpen(!sidebarOpen)} isMenuOpen={sidebarOpen} isImpersonating={isImpersonating} />
+      <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} isImpersonating={isImpersonating} />
+      <main className={`flex-1 md:pl-64 ${isImpersonating ? 'pt-24' : 'pt-16'}`}>
         <div className="p-4 md:p-8 max-w-7xl mx-auto">
           {children}
         </div>

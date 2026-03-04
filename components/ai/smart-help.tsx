@@ -121,11 +121,22 @@ export function SmartHelp({ context }: SmartHelpProps) {
     }
   };
 
+  const inputRef = React.useRef<HTMLInputElement>(null);
+
+  // Auto-focus input when widget opens
+  React.useEffect(() => {
+    if (isOpen && inputRef.current) {
+      // Small delay to let the widget render before focusing
+      const timer = setTimeout(() => inputRef.current?.focus(), 100);
+      return () => clearTimeout(timer);
+    }
+  }, [isOpen]);
+
   if (!isOpen) {
     return (
       <button
         onClick={() => setIsOpen(true)}
-        className="fixed bottom-6 right-6 z-40 h-12 w-12 rounded-full bg-gradient-to-br from-brand-500 to-brand-700 text-white shadow-lg hover:shadow-xl hover:scale-105 transition-all flex items-center justify-center"
+        className="fixed bottom-6 right-6 z-[60] h-12 w-12 rounded-full bg-gradient-to-br from-brand-500 to-brand-700 text-white shadow-lg hover:shadow-xl hover:scale-105 transition-all flex items-center justify-center pointer-events-auto"
         title="Need help?"
       >
         <HelpCircle className="h-6 w-6" />
@@ -134,8 +145,8 @@ export function SmartHelp({ context }: SmartHelpProps) {
   }
 
   return (
-    <div className="fixed bottom-6 right-6 z-40 w-80 bg-white rounded-xl shadow-2xl border border-gray-200 overflow-hidden">
-      <div className="bg-gradient-to-r from-brand-500 to-brand-700 px-4 py-3 flex items-center justify-between">
+    <div className="fixed bottom-6 right-6 z-[60] w-80 bg-white rounded-xl shadow-2xl border border-gray-200 pointer-events-auto" style={{ isolation: 'isolate' }}>
+      <div className="bg-gradient-to-r from-brand-500 to-brand-700 px-4 py-3 flex items-center justify-between rounded-t-xl">
         <div className="flex items-center gap-2 text-white">
           <Sparkles className="h-4 w-4" />
           <span className="text-sm font-medium">Smart Help</span>
@@ -148,10 +159,10 @@ export function SmartHelp({ context }: SmartHelpProps) {
         </button>
       </div>
 
-      <div className="p-4 space-y-3">
+      <div className="p-4 space-y-3 max-h-80 overflow-y-auto">
         {answer && (
           <div className="space-y-2">
-            <div className="p-3 bg-brand-50 rounded-lg text-sm text-gray-700 leading-relaxed">
+            <div className="p-3 bg-brand-50 rounded-lg text-sm text-gray-700 leading-relaxed whitespace-pre-wrap">
               {answer}
             </div>
             {navLinks.length > 0 && (
@@ -184,20 +195,24 @@ export function SmartHelp({ context }: SmartHelpProps) {
         {error && (
           <p className="text-sm text-red-600">{error}</p>
         )}
+      </div>
 
-        <div className="flex gap-2">
+      <div className="px-4 pb-4 pt-1 space-y-3">
+        <div className="relative flex gap-2">
           <input
+            ref={inputRef}
             type="text"
             value={question}
             onChange={(e) => setQuestion(e.target.value)}
             placeholder="Ask anything about this page..."
-            className="flex-1 text-sm px-3 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent"
+            className="flex-1 text-sm px-3 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent pointer-events-auto relative z-[1]"
             onKeyDown={(e) => e.key === 'Enter' && !loading && askQuestion()}
+            autoComplete="off"
           />
           <button
             onClick={askQuestion}
             disabled={loading || !question.trim()}
-            className="px-3 py-2 bg-gray-900 text-white rounded-lg hover:bg-gray-800 disabled:opacity-50 transition-colors"
+            className="px-3 py-2 bg-gray-900 text-white rounded-lg hover:bg-gray-800 disabled:opacity-50 transition-colors pointer-events-auto"
           >
             {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <HelpCircle className="h-4 w-4" />}
           </button>

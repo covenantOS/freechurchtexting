@@ -223,6 +223,7 @@ function ContactsPageContent() {
     groups: [] as string[],
     tags: [] as string[],
     notes: '',
+    optInStatus: 'opted_in' as 'opted_in' | 'opted_out' | 'pending',
   });
   const [formError, setFormError] = React.useState('');
   const [formLoading, setFormLoading] = React.useState(false);
@@ -400,7 +401,7 @@ function ContactsPageContent() {
       }
 
       setShowAddModal(false);
-      setFormData({ firstName: '', lastName: '', phone: '', email: '', groups: [], tags: [], notes: '' });
+      setFormData({ firstName: '', lastName: '', phone: '', email: '', groups: [], tags: [], notes: '', optInStatus: 'opted_in' });
       fetchContacts();
       fetchUniqueTags();
     } catch (err: any) {
@@ -462,6 +463,7 @@ function ContactsPageContent() {
       groups: contact?.groups || [],
       tags: Array.isArray(contact?.tags) ? contact.tags : [],
       notes: contact?.notes || '',
+      optInStatus: contact?.optInStatus || 'pending',
     });
     setIsEditing(false);
     setDetailTab('info');
@@ -735,6 +737,31 @@ function ContactsPageContent() {
     }
   };
 
+  const handleQuickStatusToggle = async (contact: Contact, e: React.MouseEvent) => {
+    e.stopPropagation();
+    const statusCycle: Record<string, 'opted_in' | 'opted_out' | 'pending'> = {
+      'pending': 'opted_in',
+      'opted_in': 'opted_out',
+      'opted_out': 'pending',
+    };
+    const newStatus = statusCycle[contact.optInStatus] || 'opted_in';
+
+    try {
+      const res = await adminFetch(`/api/contacts/${contact.id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ optInStatus: newStatus }),
+      });
+      if (res.ok) {
+        setContacts(prev => prev.map(c =>
+          c.id === contact.id ? { ...c, optInStatus: newStatus } : c
+        ));
+      }
+    } catch (error) {
+      console.error('Failed to toggle status:', error);
+    }
+  };
+
   const toggleFilterTag = (tag: string) => {
     setFilterTags(prev =>
       prev.includes(tag) ? prev.filter(t => t !== tag) : [...prev, tag]
@@ -969,10 +996,21 @@ function ContactsPageContent() {
                           </div>
                         </td>
                         <td>
-                          <div className="flex items-center gap-2">
+                          <button
+                            type="button"
+                            onClick={(e) => handleQuickStatusToggle(contact, e)}
+                            title="Click to change status"
+                            className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium transition-colors cursor-pointer ${
+                              contact?.optInStatus === 'opted_in'
+                                ? 'bg-green-100 text-green-700 hover:bg-green-200'
+                                : contact?.optInStatus === 'opted_out'
+                                ? 'bg-red-100 text-red-700 hover:bg-red-200'
+                                : 'bg-amber-100 text-amber-700 hover:bg-amber-200'
+                            }`}
+                          >
                             {getStatusIcon(contact?.optInStatus || 'pending')}
-                            <span className="text-sm capitalize">{contact?.optInStatus?.replace?.('_', ' ')}</span>
-                          </div>
+                            {getStatusLabel(contact?.optInStatus || 'pending')}
+                          </button>
                         </td>
                         <td className="text-right">
                           <Button
@@ -1206,45 +1244,97 @@ function ContactsPageContent() {
               icon={<Mail className="h-4 w-4" />}
             />
           </div>
+
+          {/* Opt-In Status */}
           <div>
-            <label className="text-sm font-medium text-gray-700 mb-1 block">Groups</label>
-            <div className="flex flex-wrap gap-2">
-              {groups?.map?.((group) => (
+            <label className="text-sm font-medium text-gray-700 mb-1 block">Opt-In Status</label>
+            <div className="flex gap-2">
+              {([
+                { value: 'opted_in', label: 'Opted In', color: 'bg-green-100 text-green-700 border-green-300', activeColor: 'bg-green-500 text-white border-green-500', icon: <CheckCircle2 className="h-4 w-4" /> },
+                { value: 'pending', label: 'Pending', color: 'bg-amber-50 text-amber-700 border-amber-300', activeColor: 'bg-amber-500 text-white border-amber-500', icon: <Clock className="h-4 w-4" /> },
+                { value: 'opted_out', label: 'Opted Out', color: 'bg-red-50 text-red-700 border-red-300', activeColor: 'bg-red-500 text-white border-red-500', icon: <XCircle className="h-4 w-4" /> },
+              ] as const).map((option) => (
                 <button
-                  key={group?.id}
+                  key={option.value}
                   type="button"
-                  onClick={() => {
-                    const newGroups = formData?.groups?.includes?.(group?.id || '')
-                      ? formData?.groups?.filter?.((g) => g !== group?.id)
-                      : [...(formData?.groups || []), group?.id || ''];
-                    setFormData({ ...formData, groups: newGroups });
-                  }}
-                  className={`px-3 py-1 rounded-full text-sm transition-all ${
-                    formData?.groups?.includes?.(group?.id || '')
-                      ? 'text-white'
-                      : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                  onClick={() => setFormData({ ...formData, optInStatus: option.value })}
+                  className={`flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm font-medium border transition-all ${
+                    formData.optInStatus === option.value
+                      ? option.activeColor
+                      : option.color + ' hover:opacity-80'
                   }`}
-                  style={
-                    formData?.groups?.includes?.(group?.id || '')
-                      ? { backgroundColor: (group?.color || '#3B82F6').split('|')[0] }
-                      : {}
-                  }
                 >
-                  {group?.name}
+                  {option.icon}
+                  {option.label}
                 </button>
               ))}
             </div>
+            <p className="text-xs text-gray-500 mt-1">Manually added contacts default to Opted In.</p>
           </div>
-          <div>
-            <label className="text-sm font-medium text-gray-700 mb-1 block">Tags</label>
+
+          {/* Groups */}
+          <div className="border-t border-gray-200 pt-4">
+            <label className="text-sm font-medium text-gray-700 mb-2 block flex items-center gap-2">
+              <Users className="h-4 w-4 text-gray-400" />
+              Groups
+            </label>
+            {groups?.length === 0 ? (
+              <p className="text-sm text-gray-400 italic">No groups created yet</p>
+            ) : (
+              <div className="grid grid-cols-2 gap-2">
+                {groups?.map?.((group) => {
+                  const isInGroup = formData?.groups?.includes?.(group?.id || '');
+                  return (
+                    <label
+                      key={group?.id}
+                      className={`flex items-center gap-2.5 px-3 py-2 rounded-lg border cursor-pointer transition-all ${
+                        isInGroup
+                          ? 'border-brand-300 bg-brand-50'
+                          : 'border-gray-200 hover:bg-gray-50'
+                      }`}
+                    >
+                      <input
+                        type="checkbox"
+                        checked={isInGroup}
+                        onChange={() => {
+                          const newGroups = isInGroup
+                            ? formData?.groups?.filter?.((g) => g !== group?.id)
+                            : [...(formData?.groups || []), group?.id || ''];
+                          setFormData({ ...formData, groups: newGroups });
+                        }}
+                        className="h-4 w-4 rounded border-gray-300 text-brand-600 focus:ring-brand-500"
+                      />
+                      <div
+                        className="h-3 w-3 rounded-full flex-shrink-0"
+                        style={{ backgroundColor: (group?.color || '#3B82F6').split('|')[0] }}
+                      />
+                      <span className="text-sm text-gray-700">{group?.name}</span>
+                    </label>
+                  );
+                })}
+              </div>
+            )}
+          </div>
+
+          {/* Tags */}
+          <div className="border-t border-gray-200 pt-4">
+            <label className="text-sm font-medium text-gray-700 mb-2 block flex items-center gap-2">
+              <Tag className="h-4 w-4 text-gray-400" />
+              Tags
+            </label>
             <TagInput
               tags={formData.tags}
               onChange={(tags) => setFormData({ ...formData, tags })}
               suggestedTags={[...new Set([...allTags, ...SUGGESTED_TAGS])]}
             />
           </div>
-          <div>
-            <label className="text-sm font-medium text-gray-700 mb-1 block">Notes</label>
+
+          {/* Notes */}
+          <div className="border-t border-gray-200 pt-4">
+            <label className="text-sm font-medium text-gray-700 mb-1 block flex items-center gap-2">
+              <FileText className="h-4 w-4 text-gray-400" />
+              Notes
+            </label>
             <Textarea
               value={formData.notes}
               onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
@@ -1626,45 +1716,96 @@ function ContactsPageContent() {
                         onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                       />
                     </div>
+
+                    {/* Opt-In Status */}
                     <div>
-                      <label className="text-sm font-medium text-gray-700 mb-1 block">Groups</label>
-                      <div className="flex flex-wrap gap-2">
-                        {groups?.map?.((group) => (
+                      <label className="text-sm font-medium text-gray-700 mb-1 block">Opt-In Status</label>
+                      <div className="flex gap-2">
+                        {([
+                          { value: 'opted_in', label: 'Opted In', color: 'bg-green-100 text-green-700 border-green-300', activeColor: 'bg-green-500 text-white border-green-500', icon: <CheckCircle2 className="h-4 w-4" /> },
+                          { value: 'pending', label: 'Pending', color: 'bg-amber-50 text-amber-700 border-amber-300', activeColor: 'bg-amber-500 text-white border-amber-500', icon: <Clock className="h-4 w-4" /> },
+                          { value: 'opted_out', label: 'Opted Out', color: 'bg-red-50 text-red-700 border-red-300', activeColor: 'bg-red-500 text-white border-red-500', icon: <XCircle className="h-4 w-4" /> },
+                        ] as const).map((option) => (
                           <button
-                            key={group?.id}
+                            key={option.value}
                             type="button"
-                            onClick={() => {
-                              const newGroups = formData?.groups?.includes?.(group?.id || '')
-                                ? formData?.groups?.filter?.((g) => g !== group?.id)
-                                : [...(formData?.groups || []), group?.id || ''];
-                              setFormData({ ...formData, groups: newGroups });
-                            }}
-                            className={`px-3 py-1 rounded-full text-sm transition-all ${
-                              formData?.groups?.includes?.(group?.id || '')
-                                ? 'text-white'
-                                : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                            onClick={() => setFormData({ ...formData, optInStatus: option.value })}
+                            className={`flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm font-medium border transition-all ${
+                              formData.optInStatus === option.value
+                                ? option.activeColor
+                                : option.color + ' hover:opacity-80'
                             }`}
-                            style={
-                              formData?.groups?.includes?.(group?.id || '')
-                                ? { backgroundColor: (group?.color || '#3B82F6').split('|')[0] }
-                                : {}
-                            }
                           >
-                            {group?.name}
+                            {option.icon}
+                            {option.label}
                           </button>
                         ))}
                       </div>
                     </div>
-                    <div>
-                      <label className="text-sm font-medium text-gray-700 mb-1 block">Tags</label>
+
+                    {/* Divider */}
+                    <div className="border-t border-gray-200 pt-4">
+                      <label className="text-sm font-medium text-gray-700 mb-2 block flex items-center gap-2">
+                        <Users className="h-4 w-4 text-gray-400" />
+                        Groups
+                      </label>
+                      {groups?.length === 0 ? (
+                        <p className="text-sm text-gray-400 italic">No groups created yet</p>
+                      ) : (
+                        <div className="grid grid-cols-2 gap-2">
+                          {groups?.map?.((group) => {
+                            const isInGroup = formData?.groups?.includes?.(group?.id || '');
+                            return (
+                              <label
+                                key={group?.id}
+                                className={`flex items-center gap-2.5 px-3 py-2 rounded-lg border cursor-pointer transition-all ${
+                                  isInGroup
+                                    ? 'border-brand-300 bg-brand-50'
+                                    : 'border-gray-200 hover:bg-gray-50'
+                                }`}
+                              >
+                                <input
+                                  type="checkbox"
+                                  checked={isInGroup}
+                                  onChange={() => {
+                                    const newGroups = isInGroup
+                                      ? formData?.groups?.filter?.((g) => g !== group?.id)
+                                      : [...(formData?.groups || []), group?.id || ''];
+                                    setFormData({ ...formData, groups: newGroups });
+                                  }}
+                                  className="h-4 w-4 rounded border-gray-300 text-brand-600 focus:ring-brand-500"
+                                />
+                                <div
+                                  className="h-3 w-3 rounded-full flex-shrink-0"
+                                  style={{ backgroundColor: (group?.color || '#3B82F6').split('|')[0] }}
+                                />
+                                <span className="text-sm text-gray-700">{group?.name}</span>
+                              </label>
+                            );
+                          })}
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Tags Section */}
+                    <div className="border-t border-gray-200 pt-4">
+                      <label className="text-sm font-medium text-gray-700 mb-2 block flex items-center gap-2">
+                        <Tag className="h-4 w-4 text-gray-400" />
+                        Tags
+                      </label>
                       <TagInput
                         tags={formData.tags}
                         onChange={(tags) => setFormData({ ...formData, tags })}
                         suggestedTags={[...new Set([...allTags, ...SUGGESTED_TAGS])]}
                       />
                     </div>
-                    <div>
-                      <label className="text-sm font-medium text-gray-700 mb-1 block">Notes</label>
+
+                    {/* Notes Section */}
+                    <div className="border-t border-gray-200 pt-4">
+                      <label className="text-sm font-medium text-gray-700 mb-1 block flex items-center gap-2">
+                        <FileText className="h-4 w-4 text-gray-400" />
+                        Notes
+                      </label>
                       <Textarea
                         value={formData.notes}
                         onChange={(e) => setFormData({ ...formData, notes: e.target.value })}

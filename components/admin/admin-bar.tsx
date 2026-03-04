@@ -4,8 +4,7 @@ import React from 'react';
 import { useRouter } from 'next/navigation';
 import { useAdmin } from '@/lib/admin-context';
 import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { X, Eye, ArrowLeft } from 'lucide-react';
+import { ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
 
 export function AdminBar() {
@@ -17,33 +16,30 @@ export function AdminBar() {
   }
 
   return (
-    <div className="fixed top-0 left-0 right-0 bg-amber-600/85 backdrop-blur-sm text-white py-1 px-4 z-[100] shadow-md">
-      <div className="max-w-7xl mx-auto flex items-center justify-between">
-        <div className="flex items-center gap-2">
-          <Eye className="h-3.5 w-3.5 flex-shrink-0" />
-          <span className="font-medium text-xs hidden sm:inline">Admin View:</span>
-          <Badge className="bg-white/20 text-white border-0 text-xs py-0">
-            {impersonatedUser.churchName}
-          </Badge>
-          <span className="text-amber-100 text-xs hidden md:inline">({impersonatedUser.email})</span>
-        </div>
-        <div className="flex items-center gap-2">
-          <Link href="/admin">
-            <Button size="sm" variant="ghost" className="text-white hover:bg-white/20 h-6 text-xs px-2">
-              <ArrowLeft className="h-3 w-3 mr-1" />
-              <span className="hidden sm:inline">Back to Admin</span>
-            </Button>
-          </Link>
+    <div className="fixed top-0 left-0 right-0 h-8 bg-gray-900 text-white text-sm z-[100] flex items-center px-4">
+      <div className="flex-1 flex items-center gap-2 min-w-0">
+        <span className="text-gray-400 flex-shrink-0">Viewing:</span>
+        <span className="font-medium truncate">{impersonatedUser.churchName}</span>
+      </div>
+      <div className="flex items-center gap-2 flex-shrink-0">
+        <Link href="/admin">
           <Button
             size="sm"
             variant="ghost"
-            className="text-white hover:bg-white/20 h-6 text-xs px-2"
-            onClick={() => { clearImpersonation(); router.push('/admin'); }}
+            className="text-gray-300 hover:text-white hover:bg-white/10 h-6 text-xs px-2"
           >
-            <X className="h-3 w-3 mr-1" />
-            Exit
+            <ArrowLeft className="h-3 w-3 mr-1" />
+            Back to Admin
           </Button>
-        </div>
+        </Link>
+        <Button
+          size="sm"
+          variant="ghost"
+          className="text-gray-300 hover:text-white hover:bg-white/10 h-6 text-xs px-2"
+          onClick={() => { clearImpersonation(); router.push('/admin'); }}
+        >
+          Exit
+        </Button>
       </div>
     </div>
   );

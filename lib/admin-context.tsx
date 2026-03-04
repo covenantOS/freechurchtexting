@@ -26,6 +26,7 @@ interface AdminContextType {
   effectiveChurchName: string;
   effectiveUserName: string;
   isSuperAdmin: boolean;
+  hydrated: boolean;
   // Helper for API calls with impersonation headers
   adminFetch: (url: string, options?: RequestInit) => Promise<Response>;
 }
@@ -35,20 +36,24 @@ const AdminContext = createContext<AdminContextType | null>(null);
 export function AdminProvider({ children }: { children: React.ReactNode }) {
   const { data: session } = useSession() || {};
   const [impersonatedUser, setImpersonatedUserState] = useState<ImpersonatedUser | null>(null);
-  
+  const [hydrated, setHydrated] = useState(false);
+
   const isSuperAdmin = !!(session?.user as any)?.isSuperAdmin;
-  
+
   // Load impersonation from sessionStorage on mount
   useEffect(() => {
-    if (typeof window !== 'undefined' && isSuperAdmin) {
-      const stored = sessionStorage.getItem('impersonatedUser');
-      if (stored) {
-        try {
-          setImpersonatedUserState(JSON.parse(stored));
-        } catch (e) {
-          sessionStorage.removeItem('impersonatedUser');
+    if (typeof window !== 'undefined') {
+      if (isSuperAdmin) {
+        const stored = sessionStorage.getItem('impersonatedUser');
+        if (stored) {
+          try {
+            setImpersonatedUserState(JSON.parse(stored));
+          } catch (e) {
+            sessionStorage.removeItem('impersonatedUser');
+          }
         }
       }
+      setHydrated(true);
     }
   }, [isSuperAdmin]);
   
@@ -141,6 +146,7 @@ export function AdminProvider({ children }: { children: React.ReactNode }) {
     effectiveChurchName,
     effectiveUserName,
     isSuperAdmin,
+    hydrated,
     adminFetch,
   }), [
     impersonatedUser,
@@ -154,6 +160,7 @@ export function AdminProvider({ children }: { children: React.ReactNode }) {
     effectiveChurchName,
     effectiveUserName,
     isSuperAdmin,
+    hydrated,
     adminFetch,
   ]);
   
@@ -180,6 +187,7 @@ export function useAdmin() {
       effectiveChurchName: '',
       effectiveUserName: '',
       isSuperAdmin: false,
+      hydrated: true,
       adminFetch: fetch,
     };
   }
