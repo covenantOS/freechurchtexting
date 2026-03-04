@@ -563,6 +563,20 @@ export default function A2PGuidePage() {
           </CardContent>
         </Card>
 
+        {/* A2P Templates Link */}
+        <Link
+          href="/compliance/a2p-templates"
+          className="flex items-center justify-between p-4 rounded-lg border-2 border-green-200 bg-green-50 hover:border-green-300 hover:bg-green-100 transition-all"
+        >
+          <div>
+            <p className="font-semibold text-gray-900">Auto-Fill Your Registration</p>
+            <p className="text-sm text-gray-600">
+              Ready-to-copy templates pre-filled with your church details for Twilio or Telnyx 10DLC registration
+            </p>
+          </div>
+          <ArrowRight className="h-5 w-5 text-green-600 shrink-0" />
+        </Link>
+
         {/* Phases */}
         <div className="space-y-4">
           {PHASES.map((phase) => (

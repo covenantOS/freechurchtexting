@@ -30,6 +30,18 @@ export async function PUT(request: NextRequest) {
     if (body?.timezone !== undefined) updateData.timezone = body.timezone;
     if (body?.provider !== undefined) updateData.provider = body.provider;
 
+    // Compliance / 10DLC fields
+    if (body?.slug !== undefined) updateData.slug = body.slug;
+    if (body?.logoUrl !== undefined) updateData.logoUrl = body.logoUrl;
+    if (body?.heroImageUrl !== undefined) updateData.heroImageUrl = body.heroImageUrl;
+    if (body?.businessType !== undefined) updateData.businessType = body.businessType;
+    if (body?.authorizedRepName !== undefined) updateData.authorizedRepName = body.authorizedRepName;
+    if (body?.authorizedRepTitle !== undefined) updateData.authorizedRepTitle = body.authorizedRepTitle;
+    if (body?.authorizedRepPhone !== undefined) updateData.authorizedRepPhone = body.authorizedRepPhone;
+    if (body?.authorizedRepEmail !== undefined) updateData.authorizedRepEmail = body.authorizedRepEmail;
+    if (body?.sampleMessages !== undefined) updateData.sampleMessages = body.sampleMessages;
+    if (body?.complianceCompletedAt !== undefined) updateData.complianceCompletedAt = body.complianceCompletedAt;
+
     // Encrypted provider fields
     if (body?.providerAccountSid !== undefined) {
       updateData.providerAccountSid = encrypt(body.providerAccountSid);

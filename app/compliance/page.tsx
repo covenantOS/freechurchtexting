@@ -3,6 +3,7 @@
 import React from 'react';
 import Link from 'next/link';
 import { useSession } from 'next-auth/react';
+import { useAdmin } from '@/lib/admin-context';
 import { AppLayout } from '@/components/layout/app-layout';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -19,11 +20,19 @@ import {
   ArrowRight,
   Sparkles,
   Loader2,
+  Copy,
+  Check,
+  Link2,
+  ClipboardCheck,
 } from 'lucide-react';
 
 export default function CompliancePage() {
   const { data: session } = useSession() || {};
+  const { adminFetch } = useAdmin();
   const [loadingA2P, setLoadingA2P] = React.useState(false);
+  const [churchData, setChurchData] = React.useState<any>(null);
+  const [copiedUrl, setCopiedUrl] = React.useState<string | null>(null);
+
   const [checklist, setChecklist] = React.useState({
     optIn: false,
     optOut: false,
@@ -33,8 +42,69 @@ export default function CompliancePage() {
     helpResponse: false,
   });
 
+  // Fetch church data for compliance status
+  React.useEffect(() => {
+    adminFetch('/api/church')
+      .then((r) => r.json())
+      .then((data) => {
+        setChurchData(data);
+        // Auto-check items based on church data
+        setChecklist((prev) => ({
+          ...prev,
+          optIn: !!(data?.slug && data?.complianceCompletedAt),
+          optOut: true, // System handles STOP automatically
+          businessName: !!data?.name,
+          helpResponse: true, // System auto-responds to HELP
+        }));
+      })
+      .catch(() => {});
+  }, [adminFetch]);
+
   const completedCount = Object.values(checklist)?.filter?.(Boolean)?.length ?? 0;
   const totalCount = Object.keys(checklist)?.length ?? 0;
+
+  const complianceCompleted = !!(churchData?.slug && churchData?.complianceCompletedAt);
+
+  const complianceUrls = churchData?.slug
+    ? [
+        {
+          label: 'Opt-In Page',
+          url: `freechurchtexting.com/c/${churchData.slug}`,
+          hint: 'Share this URL in your A2P registration',
+        },
+        {
+          label: 'Privacy Policy',
+          url: `freechurchtexting.com/c/${churchData.slug}/privacy`,
+          hint: '',
+        },
+        {
+          label: 'Terms & Conditions',
+          url: `freechurchtexting.com/c/${churchData.slug}/terms`,
+          hint: '',
+        },
+      ]
+    : [];
+
+  const handleCopyUrl = async (url: string) => {
+    try {
+      await navigator.clipboard.writeText(`https://${url}`);
+      setCopiedUrl(url);
+      toast.success('Copied!');
+      setTimeout(() => setCopiedUrl(null), 2000);
+    } catch {
+      toast.error('Failed to copy');
+    }
+  };
+
+  const handleCopyAllUrls = async () => {
+    try {
+      const allUrls = complianceUrls.map((u) => `https://${u.url}`).join('\n');
+      await navigator.clipboard.writeText(allUrls);
+      toast.success('All URLs copied!');
+    } catch {
+      toast.error('Failed to copy');
+    }
+  };
 
   const handleA2PCheckout = async () => {
     setLoadingA2P(true);
@@ -75,6 +145,101 @@ export default function CompliancePage() {
 
         <div className="grid lg:grid-cols-3 gap-6">
           <div className="lg:col-span-2 space-y-6">
+            {/* Your Compliance Pages - shown at the top */}
+            {complianceCompleted ? (
+              <Card className="border-green-200">
+                <CardHeader>
+                  <div className="flex items-center justify-between">
+                    <CardTitle className="flex items-center gap-2">
+                      <Shield className="h-5 w-5 text-green-600" />
+                      Your Compliance Pages
+                    </CardTitle>
+                    <Badge variant="success" className="flex items-center gap-1">
+                      <CheckCircle2 className="h-3 w-3" />
+                      Compliance Pages Active
+                    </Badge>
+                  </div>
+                </CardHeader>
+                <CardContent className="space-y-3">
+                  {complianceUrls.map((item) => (
+                    <div
+                      key={item.url}
+                      className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 p-3 rounded-lg bg-gray-50"
+                    >
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm font-medium text-gray-900">{item.label}</p>
+                        <p className="text-sm text-brand-600 truncate">{item.url}</p>
+                        {item.hint && (
+                          <p className="text-xs text-gray-500 mt-0.5">{item.hint}</p>
+                        )}
+                      </div>
+                      <div className="flex items-center gap-2 shrink-0">
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => handleCopyUrl(item.url)}
+                          className="gap-1"
+                        >
+                          {copiedUrl === item.url ? (
+                            <Check className="h-3.5 w-3.5 text-green-500" />
+                          ) : (
+                            <Copy className="h-3.5 w-3.5" />
+                          )}
+                          Copy
+                        </Button>
+                        <a
+                          href={`https://${item.url}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                        >
+                          <Button variant="outline" size="sm" className="gap-1">
+                            <ExternalLink className="h-3.5 w-3.5" />
+                            Preview
+                          </Button>
+                        </a>
+                      </div>
+                    </div>
+                  ))}
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={handleCopyAllUrls}
+                    className="mt-2 gap-1"
+                  >
+                    <ClipboardCheck className="h-3.5 w-3.5" />
+                    Copy All URLs
+                  </Button>
+                </CardContent>
+              </Card>
+            ) : churchData !== null ? (
+              <Card className="border-0 overflow-hidden">
+                <div className="bg-gradient-to-r from-brand-600 to-brand-700 p-6">
+                  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                    <div className="flex items-start gap-4">
+                      <div className="h-12 w-12 bg-white/20 rounded-xl flex items-center justify-center shrink-0">
+                        <Shield className="h-6 w-6 text-white" />
+                      </div>
+                      <div>
+                        <h3 className="text-lg font-semibold text-white">Set Up Your Compliance Pages</h3>
+                        <p className="text-sm text-brand-100 mt-1">
+                          Generate your opt-in page, privacy policy, and terms &amp; conditions in minutes. Required for 10DLC registration.
+                        </p>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-3 shrink-0">
+                      <Badge className="bg-white/20 text-white border-0">~5 minutes</Badge>
+                      <Button variant="secondary" asChild>
+                        <Link href="/compliance/setup">
+                          Start Compliance Setup
+                          <ArrowRight className="h-4 w-4" />
+                        </Link>
+                      </Button>
+                    </div>
+                  </div>
+                </div>
+              </Card>
+            ) : null}
+
             {/* Compliance Checklist */}
             <Card>
               <CardHeader>
@@ -146,7 +311,7 @@ export default function CompliancePage() {
                     </li>
                     <li className="flex items-start gap-2">
                       <CheckCircle2 className="h-4 w-4 text-green-500 mt-1 flex-shrink-0" />
-                      <span><strong>Time restrictions</strong> - Only text between 8 AM and 9 PM recipient\'s local time.</span>
+                      <span><strong>Time restrictions</strong> - Only text between 8 AM and 9 PM recipient&apos;s local time.</span>
                     </li>
                   </ul>
                 </div>
@@ -177,6 +342,22 @@ export default function CompliancePage() {
                     </div>
                     <ArrowRight className="h-5 w-5 text-brand-600" />
                   </Link>
+
+                  {/* Registration Templates Link */}
+                  <Link
+                    href="/compliance/a2p-templates"
+                    className="flex items-center justify-between p-4 rounded-lg border-2 border-green-200 bg-green-50 hover:border-green-300 hover:bg-green-100 transition-all"
+                  >
+                    <div className="flex items-start gap-3">
+                      <ClipboardCheck className="h-5 w-5 text-green-600 mt-0.5 shrink-0" />
+                      <div>
+                        <p className="font-medium text-gray-900">Ready-to-Copy A2P Templates</p>
+                        <p className="text-sm text-gray-600">Pre-filled values for your Twilio or Telnyx 10DLC registration</p>
+                      </div>
+                    </div>
+                    <ArrowRight className="h-5 w-5 text-green-600" />
+                  </Link>
+
                   <a
                     href="https://www.twilio.com/docs/messaging/compliance/a2p-10dlc"
                     target="_blank"
@@ -214,12 +395,12 @@ export default function CompliancePage() {
                 <AlertTriangle className="h-10 w-10 text-amber-600 mb-4" />
                 <h3 className="text-lg font-semibold text-gray-900 mb-2">A2P Registration is Complicated</h3>
                 <p className="text-sm text-gray-600 mb-4">
-                  Let Church Posting handle your A2P registration for you. We\'ll submit your brand and campaign
+                  Let Church Posting handle your A2P registration for you. We&apos;ll submit your brand and campaign
                   and get you approved in 7-14 days.
                 </p>
-                <Button 
-                  variant="gold" 
-                  className="w-full" 
+                <Button
+                  variant="gold"
+                  className="w-full"
                   onClick={handleA2PCheckout}
                   disabled={loadingA2P}
                 >

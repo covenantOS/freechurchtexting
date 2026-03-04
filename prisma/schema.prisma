@@ -72,6 +72,7 @@ enum TemplateCategory {
 model Church {
   id                          String           @id @default(uuid())
   name                        String
+  slug                        String?          @unique
   leaderName                  String?
   email                       String           @unique
   phone                       String?
@@ -81,6 +82,14 @@ model Church {
   zip                         String?
   website                     String?
   ein                         String?
+  logoUrl                     String?
+  heroImageUrl                String?
+  businessType                String?          @default("Non-profit Corporation")
+  authorizedRepName           String?
+  authorizedRepTitle          String?
+  authorizedRepPhone          String?
+  authorizedRepEmail          String?
+  sampleMessages              Json?
   provider                    Provider         @default(twilio)
   providerAccountSid          String?
   providerAuthToken           String?
@@ -89,6 +98,7 @@ model Church {
   a2pStatus                   A2PStatus        @default(not_started)
   subscriptionTier            SubscriptionTier @default(free)
   onboardingCompleted         Boolean          @default(false)
+  complianceCompletedAt       DateTime?
   timezone                    String           @default("America/New_York")
   createdAt                   DateTime         @default(now())
   updatedAt                   DateTime         @updatedAt
