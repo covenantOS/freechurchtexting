@@ -18,10 +18,16 @@ export const authOptions: NextAuthOptions = {
           throw new Error('Please enter email and password');
         }
 
-        const user = await prisma.user.findUnique({
-          where: { email: credentials.email },
-          include: { church: true },
-        });
+        let user;
+        try {
+          user = await prisma.user.findUnique({
+            where: { email: credentials.email },
+            include: { church: true },
+          });
+        } catch (dbError: any) {
+          console.error('Database connection error during login:', dbError?.message || dbError);
+          throw new Error('Unable to connect to the database. Please try again in a moment.');
+        }
 
         if (!user) {
           throw new Error('Invalid email or password');
