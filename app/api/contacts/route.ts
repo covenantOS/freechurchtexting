@@ -36,6 +36,29 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: error || 'Unauthorized' }, { status: 401 });
     }
 
+    // Check Blue Shared tier daily contact limit
+    const church = await prisma.church.findUnique({
+      where: { id: churchId },
+      select: { subscriptionTier: true },
+    });
+
+    if (church?.subscriptionTier === 'blue_shared') {
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      const newContactsToday = await prisma.contact.count({
+        where: {
+          churchId,
+          createdAt: { gte: today },
+        },
+      });
+      if (newContactsToday >= 20) {
+        return NextResponse.json(
+          { error: 'Blue Shared plan allows 20 new contacts per day. Upgrade to Blue Dedicated for unlimited contacts.' },
+          { status: 429 }
+        );
+      }
+    }
+
     const body = await request.json();
     const { firstName, lastName, phone, email, groups, notes, optInStatus, tags } = body || {};
 

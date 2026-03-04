@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import Link from 'next/link';
 import { AppLayout } from '@/components/layout/app-layout';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
@@ -18,6 +19,8 @@ import {
   ChevronRight,
   Inbox,
   Loader2,
+  PenSquare,
+  ExternalLink,
 } from 'lucide-react';
 
 interface Conversation {
@@ -250,12 +253,20 @@ export default function ConversationsPage() {
   return (
     <AppLayout>
       <div className="space-y-4 animate-fade-in">
-        <div>
-          <h1 className="text-2xl font-semibold text-gray-900 flex items-center gap-2">
-            <MessageSquare className="h-6 w-6 text-blue-600" />
-            Conversations
-          </h1>
-          <p className="text-gray-500 mt-1">View and reply to text conversations</p>
+        <div className="flex items-start justify-between">
+          <div>
+            <h1 className="text-2xl font-semibold text-gray-900 flex items-center gap-2">
+              <MessageSquare className="h-6 w-6 text-brand-600" />
+              Conversations
+            </h1>
+            <p className="text-gray-500 mt-1">View and reply to text conversations</p>
+          </div>
+          <Button asChild>
+            <Link href="/messages">
+              <PenSquare className="h-4 w-4 mr-2" />
+              New Message
+            </Link>
+          </Button>
         </div>
 
         <div className="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden" style={{ height: 'calc(100vh - 240px)', minHeight: '500px' }}>
@@ -301,13 +312,13 @@ export default function ConversationsPage() {
                         onClick={() => handleSelectConversation(conv)}
                         className={`w-full p-3 flex items-center gap-3 text-left transition-colors border-b border-gray-50 ${
                           isSelected
-                            ? 'bg-blue-50'
+                            ? 'bg-brand-50'
                             : 'hover:bg-gray-50'
                         }`}
                       >
                         {/* Avatar */}
                         <div className={`flex-shrink-0 w-10 h-10 rounded-full flex items-center justify-center ${
-                          conv.contactId ? 'bg-blue-100 text-blue-600' : 'bg-gray-100 text-gray-500'
+                          conv.contactId ? 'bg-brand-100 text-brand-600' : 'bg-gray-100 text-gray-500'
                         }`}>
                           {conv.contactId ? (
                             <User className="h-5 w-5" />
@@ -320,7 +331,7 @@ export default function ConversationsPage() {
                         <div className="flex-1 min-w-0">
                           <div className="flex items-center justify-between">
                             <p className={`text-sm font-medium truncate ${
-                              isSelected ? 'text-blue-700' : 'text-gray-900'
+                              isSelected ? 'text-brand-700' : 'text-gray-900'
                             }`}>
                               {conv.contactName || formatDisplay(conv.phone)}
                             </p>
@@ -369,7 +380,7 @@ export default function ConversationsPage() {
                     </button>
 
                     <div className={`flex-shrink-0 w-9 h-9 rounded-full flex items-center justify-center ${
-                      contactInfo.id ? 'bg-blue-100 text-blue-600' : 'bg-gray-100 text-gray-500'
+                      contactInfo.id ? 'bg-brand-100 text-brand-600' : 'bg-gray-100 text-gray-500'
                     }`}>
                       <User className="h-4 w-4" />
                     </div>
@@ -384,6 +395,17 @@ export default function ConversationsPage() {
                         {formatDisplay(contactInfo.phone)}
                       </p>
                     </div>
+
+                    {contactInfo.id && (
+                      <Link
+                        href={`/messages?contact=${contactInfo.id}`}
+                        className="flex items-center gap-1.5 px-3 py-1.5 text-sm text-brand-600 hover:bg-brand-50 rounded-lg transition-colors"
+                        title="Open full composer for this contact"
+                      >
+                        <ExternalLink className="h-3.5 w-3.5" />
+                        <span className="hidden sm:inline">Compose</span>
+                      </Link>
+                    )}
                   </div>
 
                   {/* Messages area */}
@@ -417,7 +439,7 @@ export default function ConversationsPage() {
                               <div
                                 className={`max-w-[75%] px-3 py-2 rounded-2xl ${
                                   msg.direction === 'outbound'
-                                    ? 'bg-blue-600 text-white rounded-br-md'
+                                    ? 'bg-brand-500 text-white rounded-br-md'
                                     : 'bg-white text-gray-900 border border-gray-200 rounded-bl-md'
                                 }`}
                               >
@@ -426,15 +448,15 @@ export default function ConversationsPage() {
                                   msg.direction === 'outbound' ? 'justify-end' : 'justify-start'
                                 }`}>
                                   <Clock className={`h-3 w-3 ${
-                                    msg.direction === 'outbound' ? 'text-blue-200' : 'text-gray-400'
+                                    msg.direction === 'outbound' ? 'text-brand-200' : 'text-gray-400'
                                   }`} />
                                   <span className={`text-[10px] ${
-                                    msg.direction === 'outbound' ? 'text-blue-200' : 'text-gray-400'
+                                    msg.direction === 'outbound' ? 'text-brand-200' : 'text-gray-400'
                                   }`}>
                                     {formatMessageTime(msg.timestamp)}
                                   </span>
                                   {msg.direction === 'outbound' && msg.status && (
-                                    <span className="text-[10px] text-blue-200 capitalize">
+                                    <span className="text-[10px] text-brand-200 capitalize">
                                       {msg.status === 'sent' || msg.status === 'delivered' ? ' \u2713' : ''}
                                     </span>
                                   )}
@@ -467,7 +489,7 @@ export default function ConversationsPage() {
                         }
                         disabled={!contactInfo.id || sending}
                         rows={1}
-                        className="flex-1 resize-none rounded-xl border border-gray-200 bg-white px-4 py-2.5 text-sm placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:cursor-not-allowed disabled:opacity-50 transition-all duration-200 max-h-32"
+                        className="flex-1 resize-none rounded-xl border border-gray-200 bg-white px-4 py-2.5 text-sm placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent disabled:cursor-not-allowed disabled:opacity-50 transition-all duration-200 max-h-32"
                         style={{ minHeight: '40px' }}
                         onInput={(e) => {
                           const target = e.target as HTMLTextAreaElement;
@@ -493,8 +515,8 @@ export default function ConversationsPage() {
               ) : (
                 // Empty state when no conversation is selected
                 <div className="flex-1 flex flex-col items-center justify-center text-center px-8">
-                  <div className="w-16 h-16 rounded-full bg-blue-50 flex items-center justify-center mb-4">
-                    <MessageSquare className="h-8 w-8 text-blue-400" />
+                  <div className="w-16 h-16 rounded-full bg-brand-50 flex items-center justify-center mb-4">
+                    <MessageSquare className="h-8 w-8 text-brand-400" />
                   </div>
                   <h3 className="text-lg font-semibold text-gray-900">Select a conversation</h3>
                   <p className="text-sm text-gray-500 mt-1 max-w-sm">

@@ -206,7 +206,7 @@ export default function GroupsPage() {
                   type="button"
                   onClick={() => setFormData({ ...formData, color })}
                   className={`h-8 w-8 rounded-lg transition-all ${
-                    formData.color === color ? 'ring-2 ring-offset-2 ring-blue-500' : ''
+                    formData.color === color ? 'ring-2 ring-offset-2 ring-brand-500' : ''
                   }`}
                   style={{ backgroundColor: color }}
                 />

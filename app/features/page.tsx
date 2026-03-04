@@ -86,8 +86,8 @@ function FeatureSection({
                 transition={{ delay: index * 0.1 }}
                 className="flex gap-4"
               >
-                <div className="w-12 h-12 rounded-xl bg-blue-100 flex items-center justify-center flex-shrink-0">
-                  <Icon className="w-6 h-6 text-blue-600" />
+                <div className="w-12 h-12 rounded-xl bg-brand-100 flex items-center justify-center flex-shrink-0">
+                  <Icon className="w-6 h-6 text-brand-600" />
                 </div>
                 <div>
                   <h4 className="font-semibold text-gray-900 mb-1">{feature.title}</h4>
@@ -173,7 +173,7 @@ export default function FeaturesPage() {
           <div className="flex items-center justify-between h-16">
             <Logo showByline={true} />
             <div className="hidden md:flex items-center gap-8">
-              <Link href="/features" className="text-blue-600 font-semibold">
+              <Link href="/features" className="text-brand-600 font-semibold">
                 Features
               </Link>
               <Link href="/pricing" className="text-gray-600 hover:text-gray-900 transition-colors font-medium">
@@ -191,7 +191,7 @@ export default function FeaturesPage() {
                 <Button variant="ghost" className="font-medium">Log In</Button>
               </Link>
               <Link href="/signup">
-                <Button className="bg-blue-600 hover:bg-blue-700 font-medium">
+                <Button className="font-medium">
                   Get Started Free
                 </Button>
               </Link>
@@ -201,7 +201,7 @@ export default function FeaturesPage() {
       </nav>
 
       {/* Hero */}
-      <section className="pt-32 pb-20 bg-gradient-to-b from-blue-50 to-white">
+      <section className="pt-32 pb-20 bg-gradient-to-b from-brand-50 to-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <motion.div
             initial="hidden"
@@ -215,7 +215,7 @@ export default function FeaturesPage() {
               Built by people who understand ministry. Every feature designed to help you reach your congregation, not to impress a corporate marketing team.
             </p>
             <Link href="/signup">
-              <Button size="lg" className="bg-blue-600 hover:bg-blue-700 text-lg px-8 py-6">
+              <Button size="lg" className="text-lg px-8 py-6">
                 Start For Free <ArrowRight className="ml-2 w-5 h-5" />
               </Button>
             </Link>
@@ -256,7 +256,7 @@ export default function FeaturesPage() {
                   transition={{ delay: index * 0.1 }}
                   className="feature-card bg-white rounded-2xl p-8 shadow-lg border border-gray-100"
                 >
-                  <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center mb-6">
+                  <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-brand-400 to-brand-600 flex items-center justify-center mb-6">
                     <Icon className="w-7 h-7 text-white" />
                   </div>
                   <h3 className="text-xl font-bold text-gray-900 mb-3">{feature.title}</h3>
@@ -412,7 +412,7 @@ export default function FeaturesPage() {
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Link href="/signup">
-                <Button size="lg" className="bg-blue-600 hover:bg-blue-700 text-lg px-8 py-6 w-full sm:w-auto">
+                <Button size="lg" className="text-lg px-8 py-6 w-full sm:w-auto">
                   Get Started Free <ArrowRight className="ml-2 w-5 h-5" />
                 </Button>
               </Link>
@@ -432,11 +432,11 @@ export default function FeaturesPage() {
           <div className="grid md:grid-cols-4 gap-12">
             <div>
               <div className="flex items-center gap-2 mb-4">
-                <MessageSquareText className="w-8 h-8 text-blue-400" />
+                <MessageSquareText className="w-8 h-8 text-brand-400" />
                 <span className="font-bold text-xl">Free Church Texting</span>
               </div>
               <p className="text-gray-400">
-                A ministry of <a href="https://churchposting.com" className="text-blue-400 hover:underline">Church Posting</a>
+                A ministry of <a href="https://churchposting.com" className="text-brand-400 hover:underline">Church Posting</a>
               </p>
             </div>
             

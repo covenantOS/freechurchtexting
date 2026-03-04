@@ -80,7 +80,7 @@ export default function CompliancePage() {
               <CardHeader>
                 <div className="flex items-center justify-between">
                   <CardTitle className="flex items-center gap-2">
-                    <Shield className="h-5 w-5 text-blue-600" />
+                    <Shield className="h-5 w-5 text-brand-600" />
                     SMS Compliance Checklist
                   </CardTitle>
                   <Badge variant={completedCount === totalCount ? 'success' : 'warning'}>
@@ -105,7 +105,7 @@ export default function CompliancePage() {
                       type="checkbox"
                       checked={checklist[item.key as keyof typeof checklist]}
                       onChange={(e) => setChecklist({ ...checklist, [item.key]: e.target.checked })}
-                      className="mt-1 h-5 w-5 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                      className="mt-1 h-5 w-5 rounded border-gray-300 text-brand-600 focus:ring-brand-500"
                     />
                     <div>
                       <p className="font-medium text-gray-900">{item.label}</p>
@@ -169,19 +169,19 @@ export default function CompliancePage() {
                 <div className="space-y-3">
                   <Link
                     href="/compliance/a2p-guide"
-                    className="flex items-center justify-between p-4 rounded-lg border-2 border-blue-200 bg-blue-50 hover:border-blue-300 hover:bg-blue-100 transition-all"
+                    className="flex items-center justify-between p-4 rounded-lg border-2 border-brand-200 bg-brand-50 hover:border-brand-300 hover:bg-brand-100 transition-all"
                   >
                     <div>
                       <p className="font-medium text-gray-900">Complete A2P Registration Guide</p>
                       <p className="text-sm text-gray-600">7-phase walkthrough with templates &amp; checklists</p>
                     </div>
-                    <ArrowRight className="h-5 w-5 text-blue-600" />
+                    <ArrowRight className="h-5 w-5 text-brand-600" />
                   </Link>
                   <a
                     href="https://www.twilio.com/docs/messaging/compliance/a2p-10dlc"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex items-center justify-between p-4 rounded-lg border border-gray-200 hover:border-blue-300 hover:bg-blue-50 transition-all"
+                    className="flex items-center justify-between p-4 rounded-lg border border-gray-200 hover:border-brand-300 hover:bg-brand-50 transition-all"
                   >
                     <div>
                       <p className="font-medium text-gray-900">Twilio A2P 10DLC Documentation</p>
@@ -193,7 +193,7 @@ export default function CompliancePage() {
                     href="https://www.twilio.com/console/messaging/bundles"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex items-center justify-between p-4 rounded-lg border border-gray-200 hover:border-blue-300 hover:bg-blue-50 transition-all"
+                    className="flex items-center justify-between p-4 rounded-lg border border-gray-200 hover:border-brand-300 hover:bg-brand-50 transition-all"
                   >
                     <div>
                       <p className="font-medium text-gray-900">Twilio Console - Brand Registration</p>

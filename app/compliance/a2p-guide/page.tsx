@@ -65,9 +65,9 @@ const PHASES = [
             <p className="text-sm text-gray-600 mb-2">
               Must be an exact match to your IRS Form CP 575 or 147C.
             </p>
-            <div className="p-3 bg-blue-50 rounded-lg text-sm text-blue-800">
+            <div className="p-3 bg-brand-50 rounded-lg text-sm text-brand-800">
               <strong>DBA Rule:</strong> If you operate under a different name, format as: <br />
-              <code className="bg-blue-100 px-1 rounded">[Legal Name] DBA [Brand Name]</code>
+              <code className="bg-brand-100 px-1 rounded">[Legal Name] DBA [Brand Name]</code>
             </div>
           </div>
 
@@ -136,9 +136,9 @@ const PHASES = [
         <h4 className="font-semibold text-gray-900">Required Page Structure</h4>
         
         <div className="grid gap-4">
-          <div className="p-4 border-2 border-blue-200 rounded-lg bg-blue-50/50">
+          <div className="p-4 border-2 border-brand-200 rounded-lg bg-brand-50/50">
             <div className="flex items-center gap-2 mb-2">
-              <div className="h-8 w-8 bg-blue-600 rounded-lg flex items-center justify-center">
+              <div className="h-8 w-8 bg-brand-500 rounded-lg flex items-center justify-center">
                 <span className="text-white font-bold">1</span>
               </div>
               <h5 className="font-semibold text-gray-900">/home - Main Landing Page</h5>
@@ -177,8 +177,8 @@ const PHASES = [
           </div>
         </div>
 
-        <div className="p-4 bg-blue-50 rounded-lg">
-          <p className="text-sm text-blue-800">
+        <div className="p-4 bg-brand-50 rounded-lg">
+          <p className="text-sm text-brand-800">
             <strong>Discovery Path Requirement:</strong> The opt-in page must be physically linked from your main website
             (e.g., in the footer). Carriers require this to verify brand legitimacy.
           </p>
@@ -278,11 +278,11 @@ const PHASES = [
     ],
     content: (
       <div className="space-y-4">
-        <div className="p-4 bg-blue-50 border border-blue-200 rounded-lg">
-          <p className="text-sm text-blue-800">
+        <div className="p-4 bg-brand-50 border border-brand-200 rounded-lg">
+          <p className="text-sm text-brand-800">
             <strong>Subdomain Best Practice:</strong> Use a subdomain for your opt-in landing page
-            (e.g., <code className="bg-blue-100 px-1 rounded">sms.yourchurch.org</code> or 
-            <code className="bg-blue-100 px-1 rounded">join.yourchurch.org</code>).
+            (e.g., <code className="bg-brand-100 px-1 rounded">sms.yourchurch.org</code> or 
+            <code className="bg-brand-100 px-1 rounded">join.yourchurch.org</code>).
           </p>
         </div>
 
@@ -348,8 +348,8 @@ const PHASES = [
         <h4 className="font-semibold text-gray-900">Sample Message #2 - Ministry Update</h4>
         <CopyableTemplate text={'[Church Name] Update: Our [Event Name] is coming up on [Date]. Registration is now open at [URL]. Reply STOP to unsubscribe or HELP for help.'} />
 
-        <div className="p-4 bg-blue-50 border border-blue-200 rounded-lg">
-          <p className="text-sm text-blue-800">
+        <div className="p-4 bg-brand-50 border border-brand-200 rounded-lg">
+          <p className="text-sm text-brand-800">
             <strong>Checkboxes in Trust Center:</strong> Select "Embedded link" and "Phone number" if your messages may contain these. 
             Only select "Age-gated content" or "Financial content" if specifically applicable.
           </p>
@@ -396,9 +396,9 @@ const PHASES = [
           </div>
         </div>
 
-        <div className="p-4 bg-blue-50 border border-blue-200 rounded-lg">
-          <h4 className="font-semibold text-blue-800 mb-2">What Happens Next?</h4>
-          <p className="text-sm text-blue-700">
+        <div className="p-4 bg-brand-50 border border-brand-200 rounded-lg">
+          <h4 className="font-semibold text-brand-800 mb-2">What Happens Next?</h4>
+          <p className="text-sm text-brand-700">
             The manual vetting process typically takes <strong>7 to 14 business days</strong>. 
             You can monitor the status in your provider's Trust Center. If rejected, review the 
             rejection reason carefully and correct the specific issue before resubmitting.
@@ -498,7 +498,7 @@ export default function A2PGuidePage() {
 
         <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-4">
           <div>
-            <Badge className="mb-2 bg-blue-100 text-blue-700">2026 Compliance Guidelines</Badge>
+            <Badge className="mb-2 bg-brand-100 text-brand-700">2026 Compliance Guidelines</Badge>
             <h1 className="text-2xl font-semibold text-gray-900">A2P 10DLC Registration Guide</h1>
             <p className="text-gray-500 mt-1">
               Complete walkthrough for registering your church for A2P 10DLC messaging
@@ -574,8 +574,8 @@ export default function A2PGuidePage() {
                 <CardHeader className="pb-2">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-4">
-                      <div className="h-12 w-12 bg-blue-100 rounded-xl flex items-center justify-center">
-                        <phase.icon className="h-6 w-6 text-blue-600" />
+                      <div className="h-12 w-12 bg-brand-100 rounded-xl flex items-center justify-center">
+                        <phase.icon className="h-6 w-6 text-brand-600" />
                       </div>
                       <div>
                         <div className="flex items-center gap-3">

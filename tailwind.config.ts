@@ -20,6 +20,19 @@ const config: Config = {
         sm: 'calc(var(--radius) - 4px)',
       },
       colors: {
+        brand: {
+          50: '#fdf5f4',
+          100: '#fae8e6',
+          200: '#f5d4d0',
+          300: '#ebb5af',
+          400: '#d4a5a1',
+          500: '#C28C88',
+          600: '#a8726e',
+          700: '#8d5d5a',
+          800: '#764e4b',
+          900: '#644342',
+          DEFAULT: '#C28C88',
+        },
         background: 'hsl(var(--background))',
         foreground: 'hsl(var(--foreground))',
         card: {

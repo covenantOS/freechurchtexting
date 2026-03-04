@@ -7,8 +7,8 @@
 :root {
   --background: #ffffff;
   --foreground: #111111;
-  --church-blue: #2563eb;
-  --church-blue-dark: #1d4ed8;
+  --church-brand: #C28C88;
+  --church-brand-dark: #a8726e;
   --church-gold: #f59e0b;
   --church-warm: #fef3c7;
 }
@@ -65,7 +65,7 @@ html {
 
 /* Focus styles */
 *:focus-visible {
-  outline: 2px solid #2563eb;
+  outline: 2px solid #C28C88;
   outline-offset: 2px;
 }
 
@@ -165,7 +165,7 @@ html {
 
 /* Gradient text */
 .gradient-text {
-  background: linear-gradient(135deg, #2563eb 0%, #7c3aed 50%, #2563eb 100%);
+  background: linear-gradient(135deg, #C28C88 0%, #8d5d5a 50%, #C28C88 100%);
   background-clip: text;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -181,7 +181,7 @@ html {
 
 /* Hero gradient */
 .hero-gradient {
-  background: linear-gradient(135deg, #eff6ff 0%, #fef3c7 50%, #fce7f3 100%);
+  background: linear-gradient(135deg, #fdf5f4 0%, #fef3c7 50%, #fae8e6 100%);
 }
 
 /* Feature card hover */

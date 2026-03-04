@@ -12,14 +12,19 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json();
-    const { question, context } = body || {};
+    const { question, context, activeTab, selectedGroup } = body || {};
 
     if (!question) {
       return NextResponse.json({ error: 'Question is required' }, { status: 400 });
     }
 
-    const userMessage = context
-      ? `Context: User is on the "${context}" page.\n\nQuestion: ${question}`
+    let contextParts: string[] = [];
+    if (context) contextParts.push(`User is on the '${context}' page`);
+    if (activeTab) contextParts.push(`active tab: '${activeTab}'`);
+    if (selectedGroup) contextParts.push(`selected group: '${selectedGroup}'`);
+
+    const userMessage = contextParts.length > 0
+      ? `Context: ${contextParts.join(', ')}.\n\nQuestion: ${question}`
       : question;
 
     const result = await generateAIResponse(

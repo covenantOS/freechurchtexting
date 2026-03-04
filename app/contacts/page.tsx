@@ -886,7 +886,7 @@ export default function ContactsPage() {
                     type="checkbox"
                     checked={importConsent}
                     onChange={(e) => setImportConsent(e.target.checked)}
-                    className="w-4 h-4 mt-0.5 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                    className="w-4 h-4 mt-0.5 rounded border-gray-300 text-brand-600 focus:ring-brand-500"
                   />
                   <div>
                     <p className="text-sm font-medium text-amber-800">
@@ -900,7 +900,7 @@ export default function ContactsPage() {
               )}
 
               <div className="text-center">
-                <a href="/templates/contacts-template.csv" className="text-sm text-blue-600 hover:underline">
+                <a href="/templates/contacts-template.csv" className="text-sm text-brand-600 hover:underline">
                   Download CSV Template
                 </a>
               </div>
@@ -948,7 +948,7 @@ export default function ContactsPage() {
                   onClick={() => setDetailTab('info')}
                   className={`px-4 py-2 font-medium text-sm border-b-2 transition-colors ${
                     detailTab === 'info'
-                      ? 'border-blue-500 text-blue-600'
+                      ? 'border-brand-500 text-brand-600'
                       : 'border-transparent text-gray-500 hover:text-gray-700'
                   }`}
                 >
@@ -959,7 +959,7 @@ export default function ContactsPage() {
                   onClick={() => setDetailTab('history')}
                   className={`px-4 py-2 font-medium text-sm border-b-2 transition-colors flex items-center gap-2 ${
                     detailTab === 'history'
-                      ? 'border-blue-500 text-blue-600'
+                      ? 'border-brand-500 text-brand-600'
                       : 'border-transparent text-gray-500 hover:text-gray-700'
                   }`}
                 >
@@ -977,8 +977,8 @@ export default function ContactsPage() {
             {detailTab === 'history' && !isEditing && (
               <div className="space-y-4">
                 <div className="flex items-center gap-4 p-4 bg-gray-50 rounded-xl">
-                  <div className="h-12 w-12 bg-blue-100 rounded-full flex items-center justify-center">
-                    <span className="text-lg font-semibold text-blue-600">
+                  <div className="h-12 w-12 bg-brand-100 rounded-full flex items-center justify-center">
+                    <span className="text-lg font-semibold text-brand-600">
                       {selectedContact?.firstName?.[0]?.toUpperCase?.()}
                     </span>
                   </div>
@@ -1012,7 +1012,7 @@ export default function ContactsPage() {
                             <div className="max-w-[80%]">
                               <div className={`px-4 py-2 rounded-2xl rounded-br-sm shadow-sm ${
                                 msg.type.includes('imessage') 
-                                  ? 'bg-blue-500 text-white' 
+                                  ? 'bg-brand-500 text-white' 
                                   : 'bg-green-500 text-white'
                               }`}>
                                 <p className="text-sm">{msg.body}</p>
@@ -1115,8 +1115,8 @@ export default function ContactsPage() {
                 ) : (
                   <div className="space-y-4">
                     <div className="flex items-center gap-4 p-4 bg-gray-50 rounded-xl">
-                      <div className="h-14 w-14 bg-blue-100 rounded-full flex items-center justify-center">
-                        <span className="text-xl font-semibold text-blue-600">
+                      <div className="h-14 w-14 bg-brand-100 rounded-full flex items-center justify-center">
+                        <span className="text-xl font-semibold text-brand-600">
                           {selectedContact?.firstName?.[0]?.toUpperCase?.()}
                         </span>
                       </div>

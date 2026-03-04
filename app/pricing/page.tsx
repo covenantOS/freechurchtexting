@@ -113,7 +113,7 @@ export default function PricingPage() {
               <Link href="/features" className="text-gray-600 hover:text-gray-900 transition-colors font-medium">
                 Features
               </Link>
-              <Link href="/pricing" className="text-blue-600 font-semibold">
+              <Link href="/pricing" className="text-brand-600 font-semibold">
                 Pricing
               </Link>
               <Link href="/about" className="text-gray-600 hover:text-gray-900 transition-colors font-medium">
@@ -128,7 +128,7 @@ export default function PricingPage() {
                 <Button variant="ghost" className="font-medium">Log In</Button>
               </Link>
               <Link href="/signup">
-                <Button className="bg-blue-600 hover:bg-blue-700 font-medium">
+                <Button className="font-medium">
                   Get Started Free
                 </Button>
               </Link>
@@ -138,7 +138,7 @@ export default function PricingPage() {
       </nav>
 
       {/* Hero */}
-      <section className="pt-32 pb-16 bg-gradient-to-b from-blue-50 to-white">
+      <section className="pt-32 pb-16 bg-gradient-to-b from-brand-50 to-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <motion.div
             initial="hidden"
@@ -327,8 +327,8 @@ export default function PricingPage() {
             className="bg-white rounded-2xl p-8 shadow-lg border"
           >
             <div className="flex items-center gap-4 mb-6">
-              <div className="w-12 h-12 rounded-xl bg-blue-100 flex items-center justify-center">
-                <Calculator className="w-6 h-6 text-blue-600" />
+              <div className="w-12 h-12 rounded-xl bg-brand-100 flex items-center justify-center">
+                <Calculator className="w-6 h-6 text-brand-600" />
               </div>
               <div>
                 <h3 className="text-2xl font-bold text-gray-900">Free Tier Cost Calculator</h3>
@@ -348,7 +348,7 @@ export default function PricingPage() {
                   step="100"
                   value={messageCount}
                   onChange={(e) => setMessageCount(parseInt(e.target.value))}
-                  className="w-full h-3 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-blue-600"
+                  className="w-full h-3 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-brand-500"
                 />
                 <div className="flex justify-between text-sm text-gray-500 mt-2">
                   <span>100</span>
@@ -357,9 +357,9 @@ export default function PricingPage() {
                 </div>
               </div>
               
-              <div className="bg-blue-50 rounded-xl p-6 text-center">
+              <div className="bg-brand-50 rounded-xl p-6 text-center">
                 <p className="text-sm text-gray-600 mb-2">Estimated Monthly Cost (Twilio)</p>
-                <p className="text-4xl font-bold text-blue-600">${estimatedCost}</p>
+                <p className="text-4xl font-bold text-brand-600">${estimatedCost}</p>
                 <p className="text-sm text-gray-500 mt-2">
                   Based on ${costPerMessage.toFixed(4)} per SMS segment
                 </p>
@@ -518,11 +518,11 @@ export default function PricingPage() {
           <div className="grid md:grid-cols-4 gap-12">
             <div>
               <div className="flex items-center gap-2 mb-4">
-                <MessageSquareText className="w-8 h-8 text-blue-400" />
+                <MessageSquareText className="w-8 h-8 text-brand-400" />
                 <span className="font-bold text-xl">Free Church Texting</span>
               </div>
               <p className="text-gray-400">
-                A ministry of <a href="https://churchposting.com" className="text-blue-400 hover:underline">Church Posting</a>
+                A ministry of <a href="https://churchposting.com" className="text-brand-400 hover:underline">Church Posting</a>
               </p>
             </div>
             

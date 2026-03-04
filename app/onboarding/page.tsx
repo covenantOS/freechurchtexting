@@ -220,7 +220,7 @@ export default function OnboardingPage() {
   if (status === 'loading') {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50">
-        <div className="h-8 w-8 border-2 border-blue-600 border-t-transparent rounded-full animate-spin" />
+        <div className="h-8 w-8 border-2 border-brand-500 border-t-transparent rounded-full animate-spin" />
       </div>
     );
   }
@@ -261,13 +261,13 @@ export default function OnboardingPage() {
                         isComplete
                           ? 'bg-green-500 text-white'
                           : isActive
-                          ? 'bg-blue-600 text-white'
+                          ? 'bg-brand-500 text-white'
                           : 'bg-gray-100 text-gray-400'
                       }`}
                     >
                       {isComplete ? <Check className="h-5 w-5" /> : Icon && <Icon className="h-5 w-5" />}
                     </div>
-                    <span className={`text-xs mt-2 ${isActive ? 'text-blue-600 font-medium' : 'text-gray-500'}`}>
+                    <span className={`text-xs mt-2 ${isActive ? 'text-brand-600 font-medium' : 'text-gray-500'}`}>
                       {step?.title}
                     </span>
                   </div>
@@ -427,8 +427,8 @@ export default function OnboardingPage() {
                   </button>
                 </div>
 
-                <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
-                  <p className="text-sm text-blue-800">
+                <div className="bg-brand-50 border border-brand-200 rounded-lg p-4 mb-6">
+                  <p className="text-sm text-brand-800">
                     <strong>Don&apos;t have an account?</strong>{' '}
                     {selectedProvider === 'twilio' ? (
                       <a href="https://www.twilio.com/try-twilio" target="_blank" rel="noopener" className="underline">
@@ -525,20 +525,20 @@ export default function OnboardingPage() {
                   <button
                     onClick={() => setPhoneOption('search')}
                     className={`flex-1 p-4 rounded-lg border-2 transition-all ${
-                      phoneOption === 'search' ? 'border-blue-500 bg-blue-50' : 'border-gray-200 hover:border-gray-300'
+                      phoneOption === 'search' ? 'border-brand-500 bg-brand-50' : 'border-gray-200 hover:border-gray-300'
                     }`}
                   >
-                    <Search className="h-6 w-6 mb-2 mx-auto text-blue-600" />
+                    <Search className="h-6 w-6 mb-2 mx-auto text-brand-600" />
                     <p className="font-medium">Search New Number</p>
                     <p className="text-sm text-gray-500">$1.15/month per number</p>
                   </button>
                   <button
                     onClick={() => setPhoneOption('existing')}
                     className={`flex-1 p-4 rounded-lg border-2 transition-all ${
-                      phoneOption === 'existing' ? 'border-blue-500 bg-blue-50' : 'border-gray-200 hover:border-gray-300'
+                      phoneOption === 'existing' ? 'border-brand-500 bg-brand-50' : 'border-gray-200 hover:border-gray-300'
                     }`}
                   >
-                    <Phone className="h-6 w-6 mb-2 mx-auto text-blue-600" />
+                    <Phone className="h-6 w-6 mb-2 mx-auto text-brand-600" />
                     <p className="font-medium">Use Existing Number</p>
                     <p className="text-sm text-gray-500">Already have a {selectedProvider === 'twilio' ? 'Twilio' : 'Telnyx'} number</p>
                   </button>
@@ -566,7 +566,7 @@ export default function OnboardingPage() {
                             className={`p-3 rounded-lg border text-left transition-all ${
                               selectedNumber === num?.phoneNumber
                                 ? 'border-green-500 bg-green-50'
-                                : 'border-gray-200 hover:border-blue-300 hover:bg-blue-50'
+                                : 'border-gray-200 hover:border-brand-300 hover:bg-brand-50'
                             }`}
                           >
                             <span className="font-mono font-medium">{num?.friendlyName}</span>
@@ -625,7 +625,7 @@ export default function OnboardingPage() {
                   </label>
                 </div>
                 <div className="mt-4 text-center">
-                  <a href="/templates/contacts-template.csv" className="text-sm text-blue-600 hover:underline">
+                  <a href="/templates/contacts-template.csv" className="text-sm text-brand-600 hover:underline">
                     Download CSV Template
                   </a>
                 </div>

@@ -62,8 +62,8 @@ export function Header({ onMenuToggle, isMenuOpen }: HeaderProps) {
               onClick={() => setDropdownOpen(!dropdownOpen)}
               className="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-gray-50 transition-colors"
             >
-              <div className="h-8 w-8 rounded-full bg-blue-100 flex items-center justify-center">
-                <span className="text-sm font-medium text-blue-600">
+              <div className="h-8 w-8 rounded-full bg-brand-100 flex items-center justify-center">
+                <span className="text-sm font-medium text-brand-700">
                   {session?.user?.name?.[0]?.toUpperCase?.() || 'U'}
                 </span>
               </div>

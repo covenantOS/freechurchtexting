@@ -20,6 +20,7 @@ import {
   ArrowRight,
   CheckCircle2,
   Apple,
+  Phone,
 } from 'lucide-react';
 
 interface Stats {
@@ -27,6 +28,8 @@ interface Stats {
   messagesSentThisMonth: number;
   deliveryRate: number;
   a2pStatus: string;
+  provider?: string;
+  hasProviderConfigured?: boolean;
 }
 
 export default function DashboardPage() {
@@ -84,10 +87,15 @@ export default function DashboardPage() {
           <p className="text-gray-500 mt-1">
             Here&apos;s how {effectiveChurchName || 'your church'} is doing with texting.
           </p>
-          {isBlue && (
+          {isBlue ? (
             <Badge className="mt-2 bg-gradient-to-r from-sky-400 to-blue-500 text-white">
               <Apple className="h-3 w-3 mr-1" />
               iMessage + RCS Active
+            </Badge>
+          ) : stats?.hasProviderConfigured && (
+            <Badge className="mt-2" variant="secondary">
+              <Phone className="h-3 w-3 mr-1" />
+              SMS via {stats?.provider === 'telnyx' ? 'Telnyx' : 'Twilio'}
             </Badge>
           )}
         </div>
@@ -103,8 +111,8 @@ export default function DashboardPage() {
                     {loading ? '-' : stats?.totalContacts?.toLocaleString?.() ?? 0}
                   </p>
                 </div>
-                <div className="h-12 w-12 bg-blue-100 rounded-xl flex items-center justify-center">
-                  <Users className="h-6 w-6 text-blue-600" />
+                <div className="h-12 w-12 bg-brand-100 rounded-xl flex items-center justify-center">
+                  <Users className="h-6 w-6 text-brand-600" />
                 </div>
               </div>
             </CardContent>
@@ -142,41 +150,46 @@ export default function DashboardPage() {
             </CardContent>
           </Card>
 
-          {/* Only show A2P status for non-Blue users */}
-          {!isBlue ? (
-            <Card>
-              <CardContent className="p-6">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-sm font-medium text-gray-500">A2P Status</p>
-                    <div className="mt-2">
-                      {loading ? '-' : getA2PStatusBadge(stats?.a2pStatus || 'not_started')}
-                    </div>
-                  </div>
-                  <div className="h-12 w-12 bg-amber-100 rounded-xl flex items-center justify-center">
-                    <Shield className="h-6 w-6 text-amber-600" />
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          ) : (
-            <Card>
-              <CardContent className="p-6">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-sm font-medium text-gray-500">Channel</p>
+          {/* Channel / A2P status card */}
+          <Card>
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-medium text-gray-500">
+                    {isBlue ? 'Channel' : 'A2P Status'}
+                  </p>
+                  {isBlue ? (
                     <p className="text-xl font-bold text-gray-900 mt-1 flex items-center gap-2">
                       <Apple className="h-5 w-5 text-blue-500" />
                       iMessage + RCS
                     </p>
-                  </div>
-                  <div className="h-12 w-12 bg-blue-100 rounded-xl flex items-center justify-center">
-                    <CheckCircle2 className="h-6 w-6 text-blue-600" />
-                  </div>
+                  ) : (
+                    <div className="mt-2">
+                      {loading ? '-' : (
+                        <>
+                          {getA2PStatusBadge(stats?.a2pStatus || 'not_started')}
+                          {stats?.hasProviderConfigured && (
+                            <p className="text-xs text-gray-500 mt-1.5">
+                              via {stats?.provider === 'telnyx' ? 'Telnyx' : 'Twilio'}
+                            </p>
+                          )}
+                        </>
+                      )}
+                    </div>
+                  )}
                 </div>
-              </CardContent>
-            </Card>
-          )}
+                <div className={`h-12 w-12 rounded-xl flex items-center justify-center ${
+                  isBlue ? 'bg-blue-100' : 'bg-amber-100'
+                }`}>
+                  {isBlue ? (
+                    <CheckCircle2 className="h-6 w-6 text-blue-600" />
+                  ) : (
+                    <Shield className="h-6 w-6 text-amber-600" />
+                  )}
+                </div>
+              </div>
+            </CardContent>
+          </Card>
         </div>
 
         {/* Quick Actions */}
@@ -186,8 +199,8 @@ export default function DashboardPage() {
             <Link href="/messages?tab=compose&type=individual">
               <Card className="cursor-pointer hover:shadow-lg transition-all group">
                 <CardContent className="p-6 flex items-center gap-4">
-                  <div className="h-12 w-12 bg-blue-100 rounded-xl flex items-center justify-center group-hover:bg-blue-200 transition-colors">
-                    <Send className="h-6 w-6 text-blue-600" />
+                  <div className="h-12 w-12 bg-brand-100 rounded-xl flex items-center justify-center group-hover:bg-brand-200 transition-colors">
+                    <Send className="h-6 w-6 text-brand-600" />
                   </div>
                   <div>
                     <p className="font-medium text-gray-900">Send a Text</p>

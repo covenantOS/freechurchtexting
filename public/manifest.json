@@ -4,8 +4,8 @@
   "description": "Free SMS texting platform for churches - by Church Posting",
   "start_url": "/dashboard",
   "display": "standalone",
-  "background_color": "#ffffff",
-  "theme_color": "#111827",
+  "background_color": "#fdf5f4",
+  "theme_color": "#C28C88",
   "orientation": "any",
   "icons": [
     {

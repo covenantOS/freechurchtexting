@@ -4,6 +4,7 @@ import React from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useSession } from 'next-auth/react';
+import { useAdmin } from '@/lib/admin-context';
 import { cn } from '@/lib/utils';
 import {
   LayoutDashboard,
@@ -45,6 +46,7 @@ interface SidebarProps {
 export function Sidebar({ isOpen, onClose }: SidebarProps) {
   const pathname = usePathname();
   const { data: session } = useSession() || {};
+  const { isImpersonating } = useAdmin();
   const isSuperAdmin = (session?.user as any)?.isSuperAdmin;
   const subscriptionTier = (session?.user as any)?.subscriptionTier || 'free';
   const isBlue = subscriptionTier === 'blue_shared' || subscriptionTier === 'blue_dedicated';
@@ -64,7 +66,8 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
       {/* Sidebar */}
       <aside
         className={cn(
-          'fixed top-16 left-0 bottom-0 w-64 bg-white border-r border-gray-100 z-30 transition-transform duration-300',
+          'fixed left-0 bottom-0 w-64 bg-white border-r border-gray-100 z-30 transition-transform duration-300',
+          isImpersonating ? 'top-24' : 'top-16',
           'md:translate-x-0',
           isOpen ? 'translate-x-0' : '-translate-x-full'
         )}
@@ -82,8 +85,8 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
                 className={cn(
                   'flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-all duration-200',
                   isActive
-                    ? 'bg-blue-50 text-blue-600'
-                    : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
+                    ? 'bg-brand-50 text-brand-700'
+                    : 'text-gray-600 hover:bg-brand-50/50 hover:text-gray-900'
                 )}
               >
                 {Icon && <Icon className="h-5 w-5" />}

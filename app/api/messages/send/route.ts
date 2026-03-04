@@ -219,6 +219,14 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'No opted-in recipients found' }, { status: 400 });
     }
 
+    // Soft warning: log if Free tier church is sending to 500+ recipients
+    if (!isBlue && recipients.length > 500) {
+      console.warn(
+        `[FREE_TIER_HIGH_VOLUME] Church ${churchId} sending to ${recipients.length} recipients. ` +
+        `Consider upgrading for better deliverability.`
+      );
+    }
+
     // Create the blast message record with sending mode fields
     const message = await prisma.message.create({
       data: {

@@ -213,8 +213,8 @@ export default function AdminPage() {
       onboardingCompleted: user.church.onboardingCompleted,
     });
     setAccountDropdownOpen(false);
-    // Navigate to their dashboard
-    router.push('/dashboard');
+    // Defer navigation to let state settle before route change
+    setTimeout(() => router.push('/dashboard'), 50);
   };
 
   const handleExitViewMode = () => {
@@ -339,15 +339,15 @@ export default function AdminPage() {
                   {/* Live Accounts */}
                   {liveAccounts.length > 0 && (
                     <>
-                      <p className="px-4 py-2 text-xs font-bold text-blue-600 uppercase tracking-wider bg-blue-50">Live Accounts</p>
+                      <p className="px-4 py-2 text-xs font-bold text-brand-600 uppercase tracking-wider bg-brand-50">Live Accounts</p>
                       {liveAccounts.map((user) => (
                         <button
                           key={user.id}
                           onClick={() => handleViewAsUser(user)}
                           className="w-full px-4 py-3 hover:bg-gray-50 flex items-center gap-3 transition-colors border-b border-gray-50"
                         >
-                          <div className="h-10 w-10 rounded-full bg-blue-100 flex items-center justify-center">
-                            <span className="text-sm font-medium text-blue-600">
+                          <div className="h-10 w-10 rounded-full bg-brand-100 flex items-center justify-center">
+                            <span className="text-sm font-medium text-brand-600">
                               {user.church.name[0]}
                             </span>
                           </div>
@@ -374,8 +374,8 @@ export default function AdminPage() {
           <Card>
             <CardContent className="p-4">
               <div className="flex items-center gap-3">
-                <div className="h-10 w-10 bg-blue-100 rounded-lg flex items-center justify-center">
-                  <Users className="h-5 w-5 text-blue-600" />
+                <div className="h-10 w-10 bg-brand-100 rounded-lg flex items-center justify-center">
+                  <Users className="h-5 w-5 text-brand-600" />
                 </div>
                 <div>
                   <p className="text-2xl font-bold">{stats.totalUsers}</p>
@@ -548,7 +548,7 @@ export default function AdminPage() {
                                       }}
                                       className="w-full px-4 py-2 text-left text-sm hover:bg-gray-50 flex items-center gap-2"
                                     >
-                                      <ArrowUpCircle className="h-4 w-4 text-blue-500" />
+                                      <ArrowUpCircle className="h-4 w-4 text-brand-500" />
                                       Change Tier
                                     </button>
                                     {user.church.onboardingCompleted ? (

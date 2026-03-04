@@ -52,10 +52,15 @@ export async function GET(request: NextRequest) {
 
     const deliveryRate = totalMessages > 0 ? Math.round((deliveredMessages / totalMessages) * 100) : 100;
 
-    // Get A2P status
+    // Get A2P status and provider info
     const church = await prisma.church.findUnique({
       where: { id: churchId },
-      select: { a2pStatus: true },
+      select: {
+        a2pStatus: true,
+        provider: true,
+        providerPhoneNumber: true,
+        subscriptionTier: true,
+      },
     });
 
     return NextResponse.json({
@@ -63,6 +68,8 @@ export async function GET(request: NextRequest) {
       messagesSentThisMonth,
       deliveryRate,
       a2pStatus: church?.a2pStatus || 'not_started',
+      provider: church?.provider || 'twilio',
+      hasProviderConfigured: !!church?.providerPhoneNumber,
     });
   } catch (error: any) {
     console.error('Dashboard stats error:', error);

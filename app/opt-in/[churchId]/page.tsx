@@ -111,15 +111,15 @@ export default function OptInPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50 flex items-center justify-center">
-        <div className="h-8 w-8 border-2 border-blue-400 border-t-transparent rounded-full animate-spin" />
+      <div className="min-h-screen bg-gradient-to-br from-brand-50 via-white to-indigo-50 flex items-center justify-center">
+        <div className="h-8 w-8 border-2 border-brand-400 border-t-transparent rounded-full animate-spin" />
       </div>
     );
   }
 
   if (notFound) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50 flex flex-col items-center justify-center p-6">
+      <div className="min-h-screen bg-gradient-to-br from-brand-50 via-white to-indigo-50 flex flex-col items-center justify-center p-6">
         <div className="w-full max-w-md bg-white rounded-2xl shadow-lg p-8 text-center">
           <div className="h-16 w-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-6">
             <svg className="h-8 w-8 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
@@ -135,7 +135,7 @@ export default function OptInPage() {
 
   if (success) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50 flex flex-col items-center justify-center p-6">
+      <div className="min-h-screen bg-gradient-to-br from-brand-50 via-white to-indigo-50 flex flex-col items-center justify-center p-6">
         <div className="w-full max-w-md bg-white rounded-2xl shadow-lg p-8 text-center">
           <div className="h-16 w-16 bg-emerald-100 rounded-full flex items-center justify-center mx-auto mb-6">
             <svg className="h-8 w-8 text-emerald-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
@@ -149,7 +149,7 @@ export default function OptInPage() {
           </p>
           <Link
             href={`/opt-out/${churchId}`}
-            className="text-sm text-blue-600 hover:text-blue-800 underline"
+            className="text-sm text-brand-600 hover:text-brand-800 underline"
           >
             Need to unsubscribe?
           </Link>
@@ -172,12 +172,12 @@ export default function OptInPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50 flex flex-col items-center justify-center p-4 sm:p-6">
+    <div className="min-h-screen bg-gradient-to-br from-brand-50 via-white to-indigo-50 flex flex-col items-center justify-center p-4 sm:p-6">
       <div className="w-full max-w-lg">
         {/* Header */}
         <div className="text-center mb-6">
-          <div className="inline-flex items-center justify-center h-14 w-14 bg-blue-100 rounded-full mb-4">
-            <svg className="h-7 w-7 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+          <div className="inline-flex items-center justify-center h-14 w-14 bg-brand-100 rounded-full mb-4">
+            <svg className="h-7 w-7 text-brand-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
             </svg>
           </div>
@@ -213,7 +213,7 @@ export default function OptInPage() {
                   placeholder="John"
                   value={firstName}
                   onChange={(e) => setFirstName(e.target.value)}
-                  className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-colors text-gray-900 placeholder-gray-400"
+                  className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-500 focus:border-brand-500 outline-none transition-colors text-gray-900 placeholder-gray-400"
                   required
                 />
               </div>
@@ -227,7 +227,7 @@ export default function OptInPage() {
                   placeholder="Doe"
                   value={lastName}
                   onChange={(e) => setLastName(e.target.value)}
-                  className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-colors text-gray-900 placeholder-gray-400"
+                  className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-500 focus:border-brand-500 outline-none transition-colors text-gray-900 placeholder-gray-400"
                 />
               </div>
             </div>
@@ -243,7 +243,7 @@ export default function OptInPage() {
                 placeholder="(555) 123-4567"
                 value={phone}
                 onChange={handlePhoneChange}
-                className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-colors text-gray-900 placeholder-gray-400"
+                className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-500 focus:border-brand-500 outline-none transition-colors text-gray-900 placeholder-gray-400"
                 required
               />
             </div>
@@ -259,7 +259,7 @@ export default function OptInPage() {
                 placeholder="john@example.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-colors text-gray-900 placeholder-gray-400"
+                className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-500 focus:border-brand-500 outline-none transition-colors text-gray-900 placeholder-gray-400"
               />
             </div>
 
@@ -272,7 +272,7 @@ export default function OptInPage() {
                   type="checkbox"
                   checked={marketingConsent}
                   onChange={(e) => setMarketingConsent(e.target.checked)}
-                  className="mt-1 h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500 cursor-pointer flex-shrink-0"
+                  className="mt-1 h-4 w-4 rounded border-gray-300 text-brand-600 focus:ring-brand-500 cursor-pointer flex-shrink-0"
                 />
                 <span className="text-xs sm:text-sm text-gray-600 leading-relaxed">
                   I consent to receive marketing text messages, about special offers, discounts, and service updates, from{' '}
@@ -286,7 +286,7 @@ export default function OptInPage() {
                   type="checkbox"
                   checked={nonMarketingConsent}
                   onChange={(e) => setNonMarketingConsent(e.target.checked)}
-                  className="mt-1 h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500 cursor-pointer flex-shrink-0"
+                  className="mt-1 h-4 w-4 rounded border-gray-300 text-brand-600 focus:ring-brand-500 cursor-pointer flex-shrink-0"
                 />
                 <span className="text-xs sm:text-sm text-gray-600 leading-relaxed">
                   I consent to receive non-marketing text messages from{' '}
@@ -300,7 +300,7 @@ export default function OptInPage() {
             <button
               type="submit"
               disabled={submitting}
-              className="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400 disabled:cursor-not-allowed text-white font-semibold py-3 px-4 rounded-lg transition-colors focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 outline-none"
+              className="w-full bg-gray-900 hover:bg-gray-800 disabled:bg-gray-400 disabled:cursor-not-allowed text-white font-semibold py-3 px-4 rounded-lg transition-colors focus:ring-2 focus:ring-brand-500 focus:ring-offset-2 outline-none"
             >
               {submitting ? (
                 <span className="inline-flex items-center gap-2">
@@ -315,11 +315,11 @@ export default function OptInPage() {
             {/* Disclaimer */}
             <p className="text-xs text-gray-500 text-center leading-relaxed">
               By submitting this form, you agree to our{' '}
-              <Link href="/terms" className="text-blue-600 hover:underline" target="_blank">
+              <Link href="/terms" className="text-brand-600 hover:underline" target="_blank">
                 Terms &amp; Conditions
               </Link>{' '}
               and{' '}
-              <Link href="/privacy" className="text-blue-600 hover:underline" target="_blank">
+              <Link href="/privacy" className="text-brand-600 hover:underline" target="_blank">
                 Privacy Policy
               </Link>
               .
@@ -333,7 +333,7 @@ export default function OptInPage() {
             Already subscribed?{' '}
             <Link
               href={`/opt-out/${churchId}`}
-              className="text-blue-600 hover:text-blue-800 underline"
+              className="text-brand-600 hover:text-brand-800 underline"
             >
               Unsubscribe here
             </Link>

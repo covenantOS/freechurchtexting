@@ -129,7 +129,7 @@ export default function OptOutPage() {
           </p>
           <Link
             href={`/opt-in/${churchId}`}
-            className="text-sm text-blue-600 hover:text-blue-800 underline"
+            className="text-sm text-brand-600 hover:text-brand-800 underline"
           >
             Changed your mind? Subscribe again
           </Link>
@@ -191,7 +191,7 @@ export default function OptOutPage() {
                 placeholder="(555) 123-4567"
                 value={phone}
                 onChange={handlePhoneChange}
-                className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-colors text-gray-900 placeholder-gray-400"
+                className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-500 focus:border-brand-500 outline-none transition-colors text-gray-900 placeholder-gray-400"
                 required
               />
               <p className="mt-1.5 text-xs text-gray-500">
@@ -222,7 +222,7 @@ export default function OptOutPage() {
             Want to subscribe instead?{' '}
             <Link
               href={`/opt-in/${churchId}`}
-              className="text-blue-600 hover:text-blue-800 underline"
+              className="text-brand-600 hover:text-brand-800 underline"
             >
               Sign up here
             </Link>

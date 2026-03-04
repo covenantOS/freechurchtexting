@@ -61,17 +61,17 @@ export default function SignupPage() {
   if (status === 'loading' || status === 'authenticated') {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50">
-        <div className="h-8 w-8 border-2 border-blue-600 border-t-transparent rounded-full animate-spin" />
+        <div className="h-8 w-8 border-2 border-brand-500 border-t-transparent rounded-full animate-spin" />
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-amber-50 flex flex-col items-center justify-center p-4">
+    <div className="min-h-screen bg-gradient-to-br from-brand-50 via-white to-amber-50 flex flex-col items-center justify-center p-4">
       <div className="w-full max-w-md">
         <div className="flex flex-col items-center mb-8">
           <Logo size="lg" showByline={true} className="mb-4" />
-          <div className="flex items-center gap-2 mt-2 px-4 py-2 bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-full text-sm font-medium">
+          <div className="flex items-center gap-2 mt-2 px-4 py-2 bg-gradient-to-r from-brand-400 to-brand-600 text-white rounded-full text-sm font-medium">
             <Sparkles className="h-4 w-4" />
             Coming Soon
           </div>
@@ -86,7 +86,7 @@ export default function SignupPage() {
               <h2 className="text-xl font-bold text-gray-900 mb-2">You&apos;re on the list!</h2>
               <p className="text-gray-600 mb-4">
                 Thanks for signing up, {formData.name.split(' ')[0]}! We&apos;ll notify you at{' '}
-                <span className="font-medium text-blue-600">{formData.email}</span> when Free Church Texting is ready for {formData.churchName || 'your church'}.
+                <span className="font-medium text-brand-600">{formData.email}</span> when Free Church Texting is ready for {formData.churchName || 'your church'}.
               </p>
               <p className="text-sm text-gray-500">
                 In the meantime, check out{' '}
@@ -101,7 +101,7 @@ export default function SignupPage() {
           <Card className="shadow-lg">
             <CardHeader className="text-center">
               <CardTitle className="flex items-center justify-center gap-2">
-                <Bell className="h-5 w-5 text-blue-500" />
+                <Bell className="h-5 w-5 text-brand-500" />
                 Register for Early Access
               </CardTitle>
               <CardDescription>
@@ -151,7 +151,7 @@ export default function SignupPage() {
                   />
                 </div>
 
-                <Button type="submit" className="w-full bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700" disabled={loading}>
+                <Button type="submit" className="w-full" disabled={loading}>
                   {loading ? 'Joining...' : 'Join the Waitlist'}
                   {!loading && <Bell className="h-4 w-4 ml-2" />}
                 </Button>
@@ -159,7 +159,7 @@ export default function SignupPage() {
 
               <div className="mt-6 text-center text-sm text-gray-500">
                 Already have an account?{' '}
-                <Link href="/login" className="text-blue-600 hover:underline font-medium">
+                <Link href="/login" className="text-brand-600 hover:underline font-medium">
                   Sign in
                 </Link>
               </div>

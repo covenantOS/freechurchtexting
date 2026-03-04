@@ -100,9 +100,18 @@ export function AdminProvider({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     if (prevChurchIdRef.current !== effectiveChurchId && prevChurchIdRef.current !== null) {
-      // Church context changed -- wipe all cached query data so stale data
-      // from the previous church is never shown while new data loads.
-      queryClient.removeQueries();
+      // Church context changed -- wipe cached query data for church-specific keys
+      // so stale data from the previous church is never shown while new data loads.
+      // Defer until after navigation settles to avoid wiping layout/CSS caches.
+      setTimeout(() => {
+        queryClient.removeQueries({ queryKey: ['dashboard'] });
+        queryClient.removeQueries({ queryKey: ['contacts'] });
+        queryClient.removeQueries({ queryKey: ['messages'] });
+        queryClient.removeQueries({ queryKey: ['groups'] });
+        queryClient.removeQueries({ queryKey: ['templates'] });
+        queryClient.removeQueries({ queryKey: ['conversations'] });
+        queryClient.removeQueries({ queryKey: ['scheduled'] });
+      }, 0);
     }
     prevChurchIdRef.current = effectiveChurchId;
   }, [effectiveChurchId, queryClient]);

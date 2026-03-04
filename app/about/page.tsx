@@ -80,7 +80,7 @@ export default function AboutPage() {
               <Link href="/pricing" className="text-gray-600 hover:text-gray-900 transition-colors font-medium">
                 Pricing
               </Link>
-              <Link href="/about" className="text-blue-600 font-semibold">
+              <Link href="/about" className="text-brand-600 font-semibold">
                 About
               </Link>
               <Link href="/blue" className="text-gray-600 hover:text-gray-900 transition-colors font-medium flex items-center gap-1">
@@ -92,7 +92,7 @@ export default function AboutPage() {
                 <Button variant="ghost" className="font-medium">Log In</Button>
               </Link>
               <Link href="/signup">
-                <Button className="bg-blue-600 hover:bg-blue-700 font-medium">
+                <Button className="font-medium">
                   Get Started Free
                 </Button>
               </Link>
@@ -382,11 +382,11 @@ export default function AboutPage() {
           <div className="grid md:grid-cols-4 gap-12">
             <div>
               <div className="flex items-center gap-2 mb-4">
-                <MessageSquareText className="w-8 h-8 text-blue-400" />
+                <MessageSquareText className="w-8 h-8 text-brand-400" />
                 <span className="font-bold text-xl">Free Church Texting</span>
               </div>
               <p className="text-gray-400">
-                A ministry of <a href="https://churchposting.com" className="text-blue-400 hover:underline">Church Posting</a>
+                A ministry of <a href="https://churchposting.com" className="text-brand-400 hover:underline">Church Posting</a>
               </p>
             </div>
             

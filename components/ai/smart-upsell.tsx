@@ -74,7 +74,7 @@ export function SmartUpsell({ trigger }: SmartUpsellProps) {
   const Icon = upsell.icon;
 
   return (
-    <div className="relative bg-gradient-to-r from-slate-50 to-blue-50 border border-blue-100 rounded-lg p-4 flex items-start gap-3">
+    <div className="relative bg-gradient-to-r from-slate-50 to-brand-50 border border-brand-100 rounded-lg p-4 flex items-start gap-3">
       <button
         onClick={() => setDismissed(true)}
         className="absolute top-2 right-2 text-gray-400 hover:text-gray-600"
@@ -82,8 +82,8 @@ export function SmartUpsell({ trigger }: SmartUpsellProps) {
         <X className="h-3.5 w-3.5" />
       </button>
 
-      <div className="h-9 w-9 rounded-lg bg-blue-100 flex items-center justify-center flex-shrink-0">
-        <Icon className="h-5 w-5 text-blue-600" />
+      <div className="h-9 w-9 rounded-lg bg-brand-100 flex items-center justify-center flex-shrink-0">
+        <Icon className="h-5 w-5 text-brand-600" />
       </div>
 
       <div className="flex-1 min-w-0">
@@ -91,7 +91,7 @@ export function SmartUpsell({ trigger }: SmartUpsellProps) {
         <p className="text-xs text-gray-600 mt-0.5">{upsell.description}</p>
         <Link
           href={upsell.href}
-          className="inline-flex items-center gap-1 text-xs font-medium text-blue-600 hover:text-blue-700 mt-2"
+          className="inline-flex items-center gap-1 text-xs font-medium text-brand-600 hover:text-brand-700 mt-2"
         >
           {upsell.cta}
           <ArrowRight className="h-3 w-3" />

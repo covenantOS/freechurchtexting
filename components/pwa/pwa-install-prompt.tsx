@@ -102,15 +102,15 @@ export function PWAInstallPrompt() {
             <p className="text-sm font-medium text-gray-900 mb-3">To install on iOS:</p>
             <ol className="space-y-3 text-sm text-gray-600">
               <li className="flex items-start gap-2">
-                <span className="bg-blue-100 text-blue-600 rounded-full w-5 h-5 flex items-center justify-center flex-shrink-0 text-xs font-bold">1</span>
+                <span className="bg-brand-100 text-brand-700 rounded-full w-5 h-5 flex items-center justify-center flex-shrink-0 text-xs font-bold">1</span>
                 <span>Tap the <Share className="h-4 w-4 inline" /> Share button in Safari</span>
               </li>
               <li className="flex items-start gap-2">
-                <span className="bg-blue-100 text-blue-600 rounded-full w-5 h-5 flex items-center justify-center flex-shrink-0 text-xs font-bold">2</span>
+                <span className="bg-brand-100 text-brand-700 rounded-full w-5 h-5 flex items-center justify-center flex-shrink-0 text-xs font-bold">2</span>
                 <span>Scroll down and tap <strong>"Add to Home Screen"</strong> <Plus className="h-4 w-4 inline" /></span>
               </li>
               <li className="flex items-start gap-2">
-                <span className="bg-blue-100 text-blue-600 rounded-full w-5 h-5 flex items-center justify-center flex-shrink-0 text-xs font-bold">3</span>
+                <span className="bg-brand-100 text-brand-700 rounded-full w-5 h-5 flex items-center justify-center flex-shrink-0 text-xs font-bold">3</span>
                 <span>Tap <strong>"Add"</strong> to confirm</span>
               </li>
             </ol>
@@ -127,11 +127,11 @@ export function PWAInstallPrompt() {
             <p className="text-sm font-medium text-gray-900 mb-3">To install:</p>
             <ol className="space-y-3 text-sm text-gray-600">
               <li className="flex items-start gap-2">
-                <span className="bg-blue-100 text-blue-600 rounded-full w-5 h-5 flex items-center justify-center flex-shrink-0 text-xs font-bold">1</span>
+                <span className="bg-brand-100 text-brand-700 rounded-full w-5 h-5 flex items-center justify-center flex-shrink-0 text-xs font-bold">1</span>
                 <span>Tap the <MoreVertical className="h-4 w-4 inline" /> menu button</span>
               </li>
               <li className="flex items-start gap-2">
-                <span className="bg-blue-100 text-blue-600 rounded-full w-5 h-5 flex items-center justify-center flex-shrink-0 text-xs font-bold">2</span>
+                <span className="bg-brand-100 text-brand-700 rounded-full w-5 h-5 flex items-center justify-center flex-shrink-0 text-xs font-bold">2</span>
                 <span>Select <strong>"Install app"</strong> or <strong>"Add to Home screen"</strong></span>
               </li>
             </ol>

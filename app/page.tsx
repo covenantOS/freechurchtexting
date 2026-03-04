@@ -89,7 +89,7 @@ function AnimatedStat({ value, suffix, label }: { value: number; suffix: string;
 
   return (
     <div ref={ref} className="text-center">
-      <div className="text-4xl md:text-5xl font-bold text-blue-600">
+      <div className="text-4xl md:text-5xl font-bold text-brand-500">
         {count}{suffix}
       </div>
       <div className="text-gray-600 mt-2">{label}</div>
@@ -108,9 +108,9 @@ function FeatureCard({ icon: Icon, title, description, index }: { icon: any; tit
       animate={inView ? "visible" : "hidden"}
       variants={fadeInUp}
       transition={{ delay: index * 0.1 }}
-      className="feature-card bg-white rounded-2xl p-8 shadow-lg border border-gray-100 hover:border-blue-200"
+      className="feature-card bg-white rounded-2xl p-8 shadow-lg border border-gray-100 hover:border-brand-200"
     >
-      <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center mb-6">
+      <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-brand-400 to-brand-600 flex items-center justify-center mb-6">
         <Icon className="w-7 h-7 text-white" />
       </div>
       <h3 className="text-xl font-bold text-gray-900 mb-3">{title}</h3>
@@ -139,11 +139,11 @@ function Testimonial({ quote, name, role, church, image, index }: { quote: strin
       </div>
       <p className="text-gray-700 text-lg italic leading-relaxed mb-6">"{quote}"</p>
       <div className="flex items-center gap-4">
-        <div className="relative w-14 h-14 rounded-full overflow-hidden bg-blue-100 flex items-center justify-center">
+        <div className="relative w-14 h-14 rounded-full overflow-hidden bg-brand-100 flex items-center justify-center">
           {image ? (
             <Image src={image} alt={name} fill className="object-cover" />
           ) : (
-            <Church className="w-7 h-7 text-blue-600" />
+            <Church className="w-7 h-7 text-brand-600" />
           )}
         </div>
         <div>
@@ -176,7 +176,7 @@ function PhoneMockup() {
           </div>
           {/* Messages header */}
           <div className="px-4 py-3 border-b flex items-center gap-3">
-            <div className="w-10 h-10 rounded-full bg-blue-600 flex items-center justify-center">
+            <div className="w-10 h-10 rounded-full bg-gray-900 flex items-center justify-center">
               <Church className="w-5 h-5 text-white" />
             </div>
             <div>
@@ -195,12 +195,12 @@ function PhoneMockup() {
                 className={`flex ${msg.sent ? 'justify-end' : 'justify-start'}`}
               >
                 <div className={`max-w-[85%] px-4 py-2 rounded-2xl text-sm ${
-                  msg.sent 
-                    ? 'bg-blue-500 text-white rounded-br-md' 
+                  msg.sent
+                    ? 'bg-brand-500 text-white rounded-br-md'
                     : 'bg-gray-100 text-gray-800 rounded-bl-md'
                 }`}>
                   {msg.text}
-                  <div className={`text-[10px] mt-1 ${msg.sent ? 'text-blue-100' : 'text-gray-400'}`}>
+                  <div className={`text-[10px] mt-1 ${msg.sent ? 'text-brand-100' : 'text-gray-400'}`}>
                     {msg.time}
                   </div>
                 </div>
@@ -210,7 +210,7 @@ function PhoneMockup() {
         </div>
       </div>
       {/* Decorative elements */}
-      <div className="absolute -z-10 top-10 -left-10 w-32 h-32 bg-blue-200 rounded-full blur-3xl opacity-50" />
+      <div className="absolute -z-10 top-10 -left-10 w-32 h-32 bg-brand-200 rounded-full blur-3xl opacity-50" />
       <div className="absolute -z-10 bottom-10 -right-10 w-40 h-40 bg-purple-200 rounded-full blur-3xl opacity-50" />
     </div>
   );
@@ -341,7 +341,7 @@ export default function LandingPage() {
               <Link href="/about" className="text-gray-600 hover:text-gray-900 transition-colors font-medium">
                 About
               </Link>
-              <Link href="/blue" className="text-blue-600 hover:text-blue-700 transition-colors font-medium flex items-center gap-1">
+              <Link href="/blue" className="text-sky-600 hover:text-sky-700 transition-colors font-medium flex items-center gap-1">
                 <Apple className="w-4 h-4" /> iMessage
               </Link>
             </div>
@@ -350,7 +350,7 @@ export default function LandingPage() {
                 <Button variant="ghost" className="font-medium">Log In</Button>
               </Link>
               <Link href="/signup">
-                <Button className="bg-blue-600 hover:bg-blue-700 font-medium">
+                <Button className="font-medium">
                   Get Started Free
                 </Button>
               </Link>
@@ -370,7 +370,7 @@ export default function LandingPage() {
               variants={staggerContainer}
               className="text-center lg:text-left"
             >
-              <motion.div variants={fadeInUp} className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-blue-100 text-blue-700 text-sm font-medium mb-6">
+              <motion.div variants={fadeInUp} className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-brand-100 text-brand-700 text-sm font-medium mb-6">
                 <Sparkles className="w-4 h-4" />
                 <span>98% Open Rate • Built for Churches</span>
               </motion.div>
@@ -385,7 +385,7 @@ export default function LandingPage() {
               
               <motion.div variants={fadeInUp} className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
                 <Link href="/signup">
-                  <Button size="lg" className="bg-blue-600 hover:bg-blue-700 text-lg px-8 py-6 w-full sm:w-auto">
+                  <Button size="lg" className="text-lg px-8 py-6 w-full sm:w-auto">
                     Start For Free <ArrowRight className="ml-2 w-5 h-5" />
                   </Button>
                 </Link>
@@ -446,7 +446,7 @@ export default function LandingPage() {
               variants={fadeInUp}
             >
               <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-6">
-                Your Emails Are Going Unread. <span className="text-blue-600">Your Congregation Deserves Better.</span>
+                Your Emails Are Going Unread. <span className="text-brand-500">Your Congregation Deserves Better.</span>
               </h2>
               <div className="space-y-6">
                 <div className="flex items-start gap-4">
@@ -496,8 +496,8 @@ export default function LandingPage() {
               </div>
               <div className="absolute -bottom-6 -left-6 bg-white rounded-xl p-4 shadow-xl border">
                 <div className="flex items-center gap-3">
-                  <div className="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center">
-                    <BarChart3 className="w-6 h-6 text-blue-600" />
+                  <div className="w-12 h-12 rounded-full bg-brand-100 flex items-center justify-center">
+                    <BarChart3 className="w-6 h-6 text-brand-600" />
                   </div>
                   <div>
                     <div className="text-2xl font-bold text-gray-900">5x</div>
@@ -551,7 +551,7 @@ export default function LandingPage() {
       </section>
 
       {/* How It Works */}
-      <section className="py-24 bg-gradient-to-b from-blue-50 to-white">
+      <section className="py-24 bg-gradient-to-b from-brand-50 to-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div
             initial="hidden"
@@ -582,13 +582,13 @@ export default function LandingPage() {
                   className="text-center relative"
                 >
                   {index < howItWorks.length - 1 && (
-                    <div className="hidden md:block absolute top-10 left-[60%] w-[80%] h-[2px] bg-gradient-to-r from-blue-200 to-blue-100" />
+                    <div className="hidden md:block absolute top-10 left-[60%] w-[80%] h-[2px] bg-gradient-to-r from-brand-200 to-brand-100" />
                   )}
                   <div className="relative z-10">
                     <div className="w-20 h-20 rounded-2xl bg-white shadow-lg border mx-auto flex items-center justify-center mb-4">
-                      <Icon className="w-9 h-9 text-blue-600" />
+                      <Icon className="w-9 h-9 text-brand-600" />
                     </div>
-                    <div className="absolute -top-2 -right-2 w-8 h-8 rounded-full bg-blue-600 text-white font-bold flex items-center justify-center text-sm shadow">
+                    <div className="absolute -top-2 -right-2 w-8 h-8 rounded-full bg-gray-900 text-white font-bold flex items-center justify-center text-sm shadow">
                       {step.step}
                     </div>
                   </div>
@@ -640,8 +640,8 @@ export default function LandingPage() {
               { icon: Heart, text: "Church-First Design" },
             ].map((item, i) => (
               <div key={i} className="text-center">
-                <div className="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center mx-auto mb-3">
-                  <item.icon className="w-6 h-6 text-blue-600" />
+                <div className="w-12 h-12 rounded-full bg-brand-100 flex items-center justify-center mx-auto mb-3">
+                  <item.icon className="w-6 h-6 text-brand-600" />
                 </div>
                 <p className="font-medium text-gray-700">{item.text}</p>
               </div>
@@ -824,7 +824,7 @@ export default function LandingPage() {
             variants={fadeIn}
             className="text-center text-gray-500 mt-8"
           >
-            <Link href="/pricing" className="text-blue-600 hover:underline">
+            <Link href="/pricing" className="text-brand-600 hover:underline">
               View full pricing details →
             </Link>
           </motion.p>
@@ -849,7 +849,7 @@ export default function LandingPage() {
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Link href="/signup">
-                <Button size="lg" className="bg-blue-600 hover:bg-blue-700 text-lg px-8 py-6 w-full sm:w-auto">
+                <Button size="lg" className="text-lg px-8 py-6 w-full sm:w-auto">
                   Start For Free <ArrowRight className="ml-2 w-5 h-5" />
                 </Button>
               </Link>
@@ -872,14 +872,14 @@ export default function LandingPage() {
           <div className="grid md:grid-cols-4 gap-12">
             <div>
               <div className="flex items-center gap-2 mb-4">
-                <MessageSquareText className="w-8 h-8 text-blue-400" />
+                <MessageSquareText className="w-8 h-8 text-brand-400" />
                 <span className="font-bold text-xl">Free Church Texting</span>
               </div>
               <p className="text-gray-400 mb-4">
                 Helping churches connect with their congregations through the power of text messaging.
               </p>
               <p className="text-sm text-gray-500">
-                A ministry of <a href="https://churchposting.com" className="text-blue-400 hover:underline">Church Posting</a>
+                A ministry of <a href="https://churchposting.com" className="text-brand-400 hover:underline">Church Posting</a>
               </p>
             </div>
             

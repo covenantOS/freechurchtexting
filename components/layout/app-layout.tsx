@@ -40,7 +40,7 @@ export function AppLayout({ children }: AppLayoutProps) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50">
         <div className="flex flex-col items-center gap-4">
-          <div className="h-8 w-8 border-2 border-blue-600 border-t-transparent rounded-full animate-spin" />
+          <div className="h-8 w-8 border-2 border-brand-500 border-t-transparent rounded-full animate-spin" />
           <p className="text-sm text-gray-500">Loading...</p>
         </div>
       </div>
@@ -56,7 +56,7 @@ export function AppLayout({ children }: AppLayoutProps) {
       <AdminBar />
       <Header onMenuToggle={() => setSidebarOpen(!sidebarOpen)} isMenuOpen={sidebarOpen} />
       <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
-      <main className={`flex-1 md:pl-64 ${isImpersonating ? 'pt-28' : 'pt-16'}`}>
+      <main className={`flex-1 md:pl-64 ${isImpersonating ? 'pt-24' : 'pt-16'}`}>
         <div className="p-4 md:p-8 max-w-7xl mx-auto">
           {children}
         </div>

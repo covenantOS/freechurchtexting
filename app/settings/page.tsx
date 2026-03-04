@@ -527,7 +527,7 @@ export default function SettingsPage() {
                         onClick={() => setActiveTab(tab?.id || '')}
                         className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-all ${
                           activeTab === tab?.id
-                            ? 'bg-blue-50 text-blue-600'
+                            ? 'bg-brand-50 text-brand-600'
                             : 'text-gray-600 hover:bg-gray-50'
                         }`}
                       >
@@ -844,7 +844,7 @@ export default function SettingsPage() {
                               isCompleted
                                 ? 'border-green-200 bg-green-50'
                                 : isCurrent
-                                ? 'border-blue-200 bg-blue-50'
+                                ? 'border-brand-200 bg-brand-50'
                                 : isRejected
                                 ? 'border-red-200 bg-red-50'
                                 : 'border-gray-200 bg-gray-50'
@@ -854,7 +854,7 @@ export default function SettingsPage() {
                               {isCompleted ? (
                                 <CheckCircle2 className="h-6 w-6 text-green-600" />
                               ) : isCurrent ? (
-                                <div className="h-6 w-6 rounded-full border-2 border-blue-500 bg-blue-500 flex items-center justify-center">
+                                <div className="h-6 w-6 rounded-full border-2 border-brand-500 bg-brand-500 flex items-center justify-center">
                                   <span className="text-xs font-bold text-white">{item.step}</span>
                                 </div>
                               ) : (
@@ -862,10 +862,10 @@ export default function SettingsPage() {
                               )}
                             </div>
                             <div className="flex-1">
-                              <p className={`font-medium ${isCompleted ? 'text-green-800' : isCurrent ? 'text-blue-800' : 'text-gray-500'}`}>
+                              <p className={`font-medium ${isCompleted ? 'text-green-800' : isCurrent ? 'text-brand-800' : 'text-gray-500'}`}>
                                 {item.title}
                               </p>
-                              <p className={`text-sm ${isCompleted ? 'text-green-600' : isCurrent ? 'text-blue-600' : 'text-gray-400'}`}>
+                              <p className={`text-sm ${isCompleted ? 'text-green-600' : isCurrent ? 'text-brand-600' : 'text-gray-400'}`}>
                                 {item.description}
                               </p>
                               {isCurrent && item.action && (
@@ -1010,8 +1010,8 @@ export default function SettingsPage() {
                               className="flex items-center justify-between p-4 bg-gray-50 rounded-lg"
                             >
                               <div className="flex items-center gap-3">
-                                <div className="h-10 w-10 rounded-full bg-blue-100 flex items-center justify-center">
-                                  <span className="text-sm font-medium text-blue-600">
+                                <div className="h-10 w-10 rounded-full bg-brand-100 flex items-center justify-center">
+                                  <span className="text-sm font-medium text-brand-600">
                                     {member?.name?.[0]?.toUpperCase?.() || 'U'}
                                   </span>
                                 </div>
@@ -1116,7 +1116,7 @@ export default function SettingsPage() {
                       <div>
                         <label className="text-sm font-medium text-gray-700 mb-1 block">Response</label>
                         <textarea
-                          className="flex min-h-[80px] w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                          className="flex min-h-[80px] w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent"
                           value={newResponse}
                           onChange={(e) => setNewResponse(e.target.value)}
                           placeholder="The message that will be sent automatically..."

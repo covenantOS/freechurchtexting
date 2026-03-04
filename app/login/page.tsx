@@ -60,7 +60,7 @@ export default function LoginPage() {
   if (status === 'loading' || status === 'authenticated') {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50">
-        <div className="h-8 w-8 border-2 border-blue-600 border-t-transparent rounded-full animate-spin" />
+        <div className="h-8 w-8 border-2 border-brand-500 border-t-transparent rounded-full animate-spin" />
       </div>
     );
   }
@@ -101,7 +101,7 @@ export default function LoginPage() {
               <div className="space-y-2">
                 <div className="flex items-center justify-between">
                   <label className="text-sm font-medium text-gray-700">Password</label>
-                  <Link href="/forgot-password" className="text-xs text-blue-600 hover:underline">
+                  <Link href="/forgot-password" className="text-xs text-brand-600 hover:underline">
                     Forgot password?
                   </Link>
                 </div>
@@ -123,7 +123,7 @@ export default function LoginPage() {
 
             <div className="mt-6 text-center text-sm text-gray-500">
               Don&apos;t have an account?{' '}
-              <Link href="/signup" className="text-blue-600 hover:underline font-medium">
+              <Link href="/signup" className="text-brand-600 hover:underline font-medium">
                 Sign up for free
               </Link>
             </div>
